@@ -3,14 +3,18 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package IDE;
 
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Toolkit;
+import java.awt.datatransfer.DataFlavor;
+import java.awt.datatransfer.UnsupportedFlavorException;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
@@ -47,6 +51,27 @@ public class GUI {
 
 				@Override
 				public void keyPressed(KeyEvent e) {
+				switch(e.getExtendedKeyCode()){
+				case 116:
+					//f5
+		file.writeStringArrayToFile("THIS IS A TEMPORARY FILE",program.split("\n"));
+		Silos.main("THIS IS A TEMPORARY FILE");
+					break;
+				case 117:
+					//f6
+					break;
+				case 17:
+			{
+				try {
+					program += (String) Toolkit.getDefaultToolkit()
+						.getSystemClipboard().getData(DataFlavor.stringFlavor);
+				} catch (UnsupportedFlavorException ex) {
+					Logger.getLogger(GUI.class.getName()).log(Level.SEVERE, null, ex);
+				} catch (IOException ex) {
+					Logger.getLogger(GUI.class.getName()).log(Level.SEVERE, null, ex);
+				}
+			} 
+			}					
 				}
 
 				@Override
@@ -106,6 +131,8 @@ public class GUI {
 	}
 
 	public static void runGUI() {
+    Silos.safeModeEnabled=false;
 		Frame mainFrame = new Frame();
+		
 	}
 }
