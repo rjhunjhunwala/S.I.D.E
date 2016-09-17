@@ -161,7 +161,7 @@ static final 	Font monospaced = new Font(Font.MONOSPACED, Font.PLAIN, 15);
 						{
 						try {
 						
-							Process runtime = Runtime.getRuntime().exec("cmd /c java -jar Rohan.jar "+Silos.IDEFileName);
+							Process runtime = Runtime.getRuntime().exec("cmd /c start java -jar Rohan.jar "+Silos.IDEFileName);
 						runtime.waitFor();
 						
 						} catch (Exception ex) {
