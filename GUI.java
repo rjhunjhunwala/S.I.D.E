@@ -1,3 +1,5 @@
+	
+
 /*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
@@ -22,212 +24,228 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 
 /**
- *
  * @author Rohans, PhiNotPi
  */
 public class GUI {
+static final 	Font monospaced = new Font(Font.MONOSPACED, Font.PLAIN, 15);
+  static List<List<Character>> progLines = new ArrayList<List<Character>>();
+  static int curLineNum = 0;
+  static int curColNum = 0;
+  static int histColNum = 0;
+  static {
+    progLines.add(new ArrayList<Character>());
+  }
 
-	static List<List<Character>> progLines = new ArrayList<List<Character>>();
-	static int curLineNum = 0;
-	static int curColNum = 0;
+  static List<Character> curLine() {
+    return progLines.get(curLineNum);
+  }
 
-	static {
-		progLines.add(new ArrayList<Character>());
-	}
+  static String program() {
+    String res = "";
+    //res += curLineNum + " " + curColNum + " " + histColNum + "\n";
+    for (int l = 0; l < progLines.size(); l++) {
+      if (l > 0) {
+        res += "\n";
+      }
+      for (int c = 0; c < progLines.get(l).size(); c++) {
+        res += progLines.get(l).get(c);
+      }
+    }
+    return res;
+  }
 
-	static List<Character> curLine() {
-		return progLines.get(curLineNum);
-	}
+  static void applyFormInput(String s) {
+    for (Character pushed : s.toCharArray()) {
+      applyFormInput(pushed);
+    }
+  }
 
-	static String program() {
-		String res = "";
-		for (int l = 0; l < progLines.size(); l++) {
-			if (l > 0) {
-				res += "\n";
-			}
-			for (int c = 0; c < progLines.get(l).size(); c++) {
-				res += progLines.get(l).get(c);
-			}
-		}
-		return res;
-	}
+  static void applyFormInput(char pushed) {
+    if ((int) pushed == 8) {
+      if (curColNum == 0 && curLineNum != 0) {
+        int newColNum = progLines.get(curLineNum - 1).size();
+        progLines.get(curLineNum - 1).addAll(curLine());
+        progLines.remove(curLineNum);
+        curLineNum--;
+        curColNum = newColNum;
+      } else if (curColNum > 0) {
+        curLine().remove(curColNum - 1);
+        curColNum--;
+      }
+    } else if ((int) pushed == 127) {
+      // add delete functionality
+    } else if ((int) pushed == 10) {
+      List<Character> newLine = curLine().subList(curColNum, curLine().size());
+      progLines.add(curLineNum + 1, new ArrayList<Character>(newLine));
+      newLine.clear();
+      curLineNum++;
+      curColNum = 0;
+    } else if ((int) pushed >= 32) {
+      curLine().add(curColNum, pushed);
+      curColNum++;
+    } else {
+      curLine().add(curColNum, '?');
+      curColNum++;
+    }
+    histColNum = curColNum;
+  }
 
-	static void applyFormInput(String s) {
-		for (Character pushed : s.toCharArray()) {
-			applyFormInput(pushed);
-		}
-	}
+  static void cursorLeft() {
+    if (curColNum == 0 && curLineNum != 0) {
+      curLineNum--;
+      curColNum = curLine().size();
+    } else if (curColNum > 0) {
+      curColNum--;
+    }
+    histColNum = curColNum;
+  }
 
-	static void applyFormInput(char pushed) {
-		if ((int) pushed == 8) {
-			if (curColNum == 0 && curLineNum != 0) {
-				int newColNum = progLines.get(curLineNum - 1).size();
-				progLines.get(curLineNum - 1).addAll(curLine());
-				progLines.remove(curLineNum);
-				curLineNum--;
-				curColNum = newColNum;
-			} else if (curColNum > 0) {
-				curLine().remove(curColNum - 1);
-				curColNum--;
-			}
-		} else if ((int) pushed == 127) {
-			// add delete functionality
-		} else if ((int) pushed == 10) {
-			List<Character> newLine = curLine().subList(curColNum, curLine().size());
-			progLines.add(curLineNum + 1, new ArrayList<Character>(newLine));
-			newLine.clear();
-			curLineNum++;
-			curColNum = 0;
-		} else if ((int) pushed >= 32) {
-			curLine().add(curColNum, pushed);
-			curColNum++;
-		} else {
-			curLine().add(curColNum, '?');
-			curColNum++;
-		}
-	}
+  static void cursorRight() {
+    if (curColNum == curLine().size() && curLineNum < progLines.size() - 1) {
+      curLineNum++;
+      curColNum = 0;
+    } else if (curColNum < curLine().size()) {
+      curColNum++;
+    }
+    histColNum = curColNum;
+  }
 
-	static void cursorLeft() {
-		if (curColNum == 0 && curLineNum != 0) {
-			curLineNum--;
-			curColNum = curLine().size();
-		} else if (curColNum > 0) {
-			curColNum--;
-		}
-	}
+  static void cursorUp() {
+    if (curLineNum > 0) {
+      curLineNum--;
+      if (histColNum > curLine().size()) {
+        curColNum = curLine().size();
+      } else {
+        curColNum = histColNum;
+      }
+    }
+  }
 
-	static void cursorRight() {
-		if (curColNum == curLine().size() ) {
-			if(curLineNum != progLines.size()-1){
-			curLineNum++;
-			curColNum = 0;
-			}
-		} else if (curColNum < curLine().size()) {
-			curColNum++;
-		}
-	}
+  static void cursorDown() {
+    if (curLineNum < progLines.size() - 1) {
+      curLineNum++;
+      if (histColNum > curLine().size()) {
+        curColNum = curLine().size();
+      } else {
+        curColNum = histColNum;
+      }
+    }
+  }
 
-	public static class Frame extends JFrame {
+  public static class Frame extends JFrame {
 
-		public Frame() {
-			super("IDE (f5=save+compile+run/f6=save)");
-			this.setVisible(true);
-			this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-			final Frame f = this;
-			this.addKeyListener(new KeyListener() {
-				@Override
-				public void keyTyped(KeyEvent e) {
-					char pushed = e.getKeyChar();
-					applyFormInput(pushed);
-					f.repaint();
-				}
+    public Frame() {
+      super("IDE (f5=save+compile+run/f6=save)");
+      this.setVisible(true);
+      this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+      final Frame f = this;
+      this.addKeyListener(new KeyListener() {
+        @Override
+        public void keyTyped(KeyEvent e) {
+          char pushed = e.getKeyChar();
+          applyFormInput(pushed);
+          f.repaint();
+        }
 
-				@Override
-				public void keyPressed(KeyEvent e) {
-					switch (e.getExtendedKeyCode()) {
-						case 116: // f5
-							file.writeStringArrayToFile(Silos.IDEFileName, program().split("\n"));
-							 {
-								try {
+        @Override
+        public void keyPressed(KeyEvent e) {
+          switch (e.getExtendedKeyCode()) {
+          case 116: // f5
+            file.writeStringArrayToFile("THIS IS A TEMPORARY FILE", program()
+                .split("\n"));
+            Silos.main("THIS IS A TEMPORARY FILE");
+            break;
+          case 117: // f6
+            break;
+          case 17:
+            try {
+              applyFormInput((String) Toolkit.getDefaultToolkit()
+                  .getSystemClipboard().getData(DataFlavor.stringFlavor));
+            } catch (UnsupportedFlavorException ex) {
+              Logger.getLogger(GUI.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (IOException ex) {
+              Logger.getLogger(GUI.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            break;
+          case 37: // left arrow
+            cursorLeft();
+            break;
+          case 38: // up arrow
+            cursorUp();
+            break;
+          case 39: // right arrow
+            cursorRight();
+            break;
+          case 40: // down arrow
+            cursorDown();
+            break;
+          }
 
-									Runtime rt = Runtime.getRuntime();
-									rt.exec("cmd.exe /c & start cmd.exe /k \"java -jar Rohan.jar \"" + Silos.IDEFileName + "\"\"");
+          f.repaint();
+        }
 
-								} catch (Exception ex) {
-									Logger.getLogger(GUI.class.getName()).log(Level.SEVERE, null, ex);
-								}
-							}
-							break;
+        @Override
+        public void keyReleased(KeyEvent e) {
 
-						case 117: // f6
-							break;
-						case 17:
-							try {
-								applyFormInput((String) Toolkit.getDefaultToolkit()
-									.getSystemClipboard().getData(DataFlavor.stringFlavor));
-							} catch (UnsupportedFlavorException ex) {
-								Logger.getLogger(GUI.class.getName()).log(Level.SEVERE, null, ex);
-							} catch (IOException ex) {
-								Logger.getLogger(GUI.class.getName()).log(Level.SEVERE, null, ex);
-							}
-							break;
-						case 37: // left arrow
-							System.out.println("left");
-							cursorLeft();
-							break;
-						case 39: // left arrow
-							cursorRight();
-							break;
-					}
+        }
 
-					f.repaint();
+      });
+      this.add(new Panel());
+      this.pack();
+      this.setBackground(Color.black);
+      this.setExtendedState(JFrame.MAXIMIZED_BOTH);
+    }
+  }
 
-				}
+  public static class Panel extends JPanel {
 
-				@Override
-				public void keyReleased(KeyEvent e) {
+    static int screenHeight, screenLength;
 
-				}
+    public Panel() {
+      this.setBackground(Color.black);
+    }
 
-			});
-			this.add(new Panel());
-			this.pack();
-			this.setBackground(Color.black);
-			this.setExtendedState(JFrame.MAXIMIZED_BOTH);
-		}
-	}
+    @Override
+    public Dimension getPreferredSize() {
+      return new Dimension(screenLength, screenHeight);
+    }
 
-	public static class Panel extends JPanel {
-
-		static int screenHeight, screenLength;
-
-		public Panel() {
-			this.setBackground(Color.black);
-		}
-
-		@Override
-		public Dimension getPreferredSize() {
-			return new Dimension(screenLength, screenHeight);
-		}
-		Font monospaced = new Font(Font.MONOSPACED, Font.PLAIN, 15);
-
-		@Override
-		public void paintComponent(Graphics g) {
-			g.setFont(monospaced);
-			g.setColor(Color.WHITE);
-			String[] lines = program().split("\n");
-			for (int i = 0; i < lines.length; i++) {
-				prettyPrint(lines[i], i, g);
-			}
-			g.setColor(Color.blue);
+    @Override
+    public void paintComponent(Graphics g) {
+	g.setFont(monospaced);
+      g.setColor(Color.WHITE);
+      String[] lines = program().split("\n");
+      for (int i = 0; i < lines.length; i++) {
+        prettyPrint(lines[i], i, g);
+      }
+						g.setColor(Color.blue);
 			g.drawLine(curColNum * 9, curLineNum * 15, curColNum * 9, curLineNum * 15 + 15);
+    }
 
-		}
+    /**
+     * The following static block is used courtesy of stack overflow creative
+     * commons liscence
+     * http://stackoverflow.com/questions/3680221/how-can-i-get-
+     * the-monitor-size-in-java
+     */
+    static {
+      Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+      double width = screenSize.getWidth();
+      double height = screenSize.getHeight();
+      screenHeight = (int) height + 2;
+      // screenheight=768;
+      screenLength = (int) width + 2;
+      // screenlength=1024;
+    }
 
-		/**
-		 * The following static block is used courtesy of stack overflow creative
-		 * commons liscence
-		 * http://stackoverflow.com/questions/3680221/how-can-i-get-
-		 * the-monitor-size-in-java
-		 */
-		static {
-			Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-			double width = screenSize.getWidth();
-			double height = screenSize.getHeight();
-			screenHeight = (int) height + 2;
-			// screenheight=768;
-			screenLength = (int) width + 2;
-			// screenlength=1024;
-		}
+    private void prettyPrint(String line, int i, Graphics g) {
+      g.drawString(line, 0, i * 15 + 10);
+    }
+  }
 
-		private void prettyPrint(String line, int i, Graphics g) {
-			g.drawString(line, 0, i * 15 + 10);
-		}
-	}
-
-	public static void runGUI() {
-		Silos.safeModeEnabled = false;
-		Frame mainFrame = new Frame();
-
-	}
+  public static void runGUI() {
+    Silos.safeModeEnabled = false;
+    Frame mainFrame = new Frame();
+  }
 }
+
