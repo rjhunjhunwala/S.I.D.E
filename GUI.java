@@ -34,6 +34,11 @@ static final 	Font monospaced = new Font(Font.MONOSPACED, Font.PLAIN, 15);
   static int curLineNum = 0;
   static int curColNum = 0;
   static int histColNum = 0;
+	static final String[] LANGUAGES = new String[]{
+		"SILOS"
+	};
+	
+		
   static {
     progLines.add(new ArrayList<Character>());
   }
