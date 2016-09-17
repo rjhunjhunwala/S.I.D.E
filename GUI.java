@@ -28,6 +28,7 @@ public class GUI {
 			super("IDE (f5=save+compile+run/f6=save)");
 			this.setVisible(true);
 			this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+			final Frame f = this;
 			this.addKeyListener(
 				new KeyListener() {
 				@Override
@@ -41,6 +42,7 @@ public class GUI {
 					} else {
 						program += pushed;
 					}
+					f.repaint();
 				}
 
 				@Override
@@ -105,8 +107,5 @@ public class GUI {
 
 	public static void runGUI() {
 		Frame mainFrame = new Frame();
-		for (;;) {
-			mainFrame.repaint();
-		}
 	}
 }
