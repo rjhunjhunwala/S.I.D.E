@@ -136,7 +136,7 @@ static boolean safeModeEnabled = true;
 			height = inHeight;
 		}
 	}
-
+public static final String IDEFileName = "TEMPFILE_1518259122315123_SILOS_V";
 	/**
 	 * The main interpretation code
 	 *
@@ -153,6 +153,13 @@ static boolean safeModeEnabled = true;
 				interactive|=!safeModeEnabled;
 				
 		int[][] program = compile(args.length==0?getStringFromSTDIN("FileName?", sc):args[0]);
+		
+		if(args.length==1){
+			if(args[0].equals(IDEFileName)){
+				interactive = true;
+			}
+		}
+		
 		int arg_index = 1;
 		int ptr = 0;
 		int length = program.length;
