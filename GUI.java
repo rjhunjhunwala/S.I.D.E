@@ -37,13 +37,23 @@ public class GUI {
 				new KeyListener() {
 				@Override
 				public void keyTyped(KeyEvent e) {
+		switch(e.getExtendedKeyCode()){
+				case 116:
+
+				case 117:
+				case 17:
+					return;
+				default:
+
+			}					
+					
 					char pushed = e.getKeyChar();
-					String disallowedCharacters = "\b";
-					if (disallowedCharacters.contains(pushed + "")) {
+					if (pushed =='\b') {
 						if (program.length() > 0) {
 							program = program.substring(0, program.length() - 1);
 						}
 					} else {
+		if(Character.isBmpCodePoint(pushed))
 						program += pushed;
 					}
 					f.repaint();
@@ -55,8 +65,15 @@ public class GUI {
 				case 116:
 					//f5
 		file.writeStringArrayToFile("THIS IS A TEMPORARY FILE",program.split("\n"));
-		Silos.main("THIS IS A TEMPORARY FILE");
-					break;
+				{
+					try {
+						//		Silos.main("THIS IS A TEMPORARY FILE");
+						Process p = Runtime.getRuntime().exec("java Silos.java \"THIS IS A TEMPORARY FILE\"");
+					} catch (IOException ex) {
+						Logger.getLogger(GUI.class.getName()).log(Level.SEVERE, null, ex);
+					}
+				}
+		break;
 				case 117:
 					//f6
 					break;
@@ -130,8 +147,13 @@ public class GUI {
 		}
 	}
 
-	public static void runGUI() {
+	public static void runGUI()  {
     Silos.safeModeEnabled=false;
+		try {
+			Thread.sleep(10);
+		} catch (InterruptedException ex) {
+			Logger.getLogger(GUI.class.getName()).log(Level.SEVERE, null, ex);
+		}
 		Frame mainFrame = new Frame();
 		
 	}
