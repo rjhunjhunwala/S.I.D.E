@@ -1,9 +1,11 @@
+
+
 /*
  * This IDE Is in the public domain. 
 * Terms and conditions of the liscence
 * - Do whatever you want! I don't care!
 */
-package IDE;
+
 
 /**
  *

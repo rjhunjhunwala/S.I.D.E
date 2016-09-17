@@ -24,7 +24,6 @@ import javax.swing.JPanel;
  * @author rohan
  */
 public class Silos {
-static boolean safeModeEnabled = true;
 	/**
 	 * This integer[] represents the heap of memory which can be addressed
 	 */
@@ -150,7 +149,7 @@ public static final String IDEFileName = "TEMPFILE_1518259122315123_SILOS_V";
 		Stack<Integer> stack = new Stack<>();
 		Scanner sc = new Scanner(System.in);
 		boolean interactive = (args.length == 0);
-				interactive|=!safeModeEnabled;
+	
 				
 		int[][] program = compile(args.length==0?getStringFromSTDIN("FileName?", sc):args[0]);
 		

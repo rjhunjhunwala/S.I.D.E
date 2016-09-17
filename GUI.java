@@ -15,7 +15,9 @@ import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.UnsupportedFlavorException;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
@@ -151,9 +153,22 @@ static final 	Font monospaced = new Font(Font.MONOSPACED, Font.PLAIN, 15);
         public void keyPressed(KeyEvent e) {
           switch (e.getExtendedKeyCode()) {
           case 116: // f5
-            file.writeStringArrayToFile("THIS IS A TEMPORARY FILE", program()
+            file.writeStringArrayToFile(Silos.IDEFileName, program()
                 .split("\n"));
-            Silos.main("THIS IS A TEMPORARY FILE");
+           
+
+					
+						{
+						try {
+						
+							Process runtime = Runtime.getRuntime().exec("cmd /c start Rohan.jar "+Silos.IDEFileName);
+						runtime.waitFor();
+						} catch (Exception ex) {
+							Logger.getLogger(GUI.class.getName()).log(Level.SEVERE, null, ex);
+						}
+					}
+						
+						
             break;
           case 117: // f6
             break;
@@ -244,7 +259,6 @@ static final 	Font monospaced = new Font(Font.MONOSPACED, Font.PLAIN, 15);
   }
 
   public static void runGUI() {
-    Silos.safeModeEnabled = false;
     Frame mainFrame = new Frame();
   }
 }
