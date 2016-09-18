@@ -1,5 +1,3 @@
-	
-
 /*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
@@ -15,131 +13,46 @@ import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.UnsupportedFlavorException;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+import javax.swing.JSplitPane;
+import javax.swing.JScrollPane;
 
 /**
  * @author Rohans, PhiNotPi
  */
 public class GUI {
-static final 	Font monospaced = new Font(Font.MONOSPACED, Font.PLAIN, 15);
-  static List<List<Character>> progLines = new ArrayList<List<Character>>();
-  static int curLineNum = 0;
-  static int curColNum = 0;
-  static int histColNum = 0;
-	static final String[] LANGUAGES = new String[]{
-		"SILOS"
-	};
-	
-		
-  static {
-    progLines.add(new ArrayList<Character>());
+  static final String[] LANGUAGES = new String[] { "SILOS" };
+  static Form codeForm = new EditorForm();
+  static Form consoleForm = new ConsoleForm();
+  static Form focusForm = codeForm;
+
+  static Form focusForm() {
+    return focusForm;
   }
 
-  static List<Character> curLine() {
-    return progLines.get(curLineNum);
-  }
-
-  static String program() {
-    String res = "";
-    //res += curLineNum + " " + curColNum + " " + histColNum + "\n";
-    for (int l = 0; l < progLines.size(); l++) {
-      if (l > 0) {
-        res += "\n";
-      }
-      for (int c = 0; c < progLines.get(l).size(); c++) {
-        res += progLines.get(l).get(c);
-      }
-    }
-    return res;
-  }
-
-  static void applyFormInput(String s) {
-    for (Character pushed : s.toCharArray()) {
-      applyFormInput(pushed);
-    }
-  }
-
-  static void applyFormInput(char pushed) {
-    if ((int) pushed == 8) {
-      if (curColNum == 0 && curLineNum != 0) {
-        int newColNum = progLines.get(curLineNum - 1).size();
-        progLines.get(curLineNum - 1).addAll(curLine());
-        progLines.remove(curLineNum);
-        curLineNum--;
-        curColNum = newColNum;
-      } else if (curColNum > 0) {
-        curLine().remove(curColNum - 1);
-        curColNum--;
-      }
-    } else if ((int) pushed == 127) {
-      // add delete functionality
-    } else if ((int) pushed == 10) {
-      List<Character> newLine = curLine().subList(curColNum, curLine().size());
-      progLines.add(curLineNum + 1, new ArrayList<Character>(newLine));
-      newLine.clear();
-      curLineNum++;
-      curColNum = 0;
-    } else if ((int) pushed >= 32) {
-      curLine().add(curColNum, pushed);
-      curColNum++;
-    } else {
-      curLine().add(curColNum, '?');
-      curColNum++;
-    }
-    histColNum = curColNum;
-  }
-
-  static void cursorLeft() {
-    if (curColNum == 0 && curLineNum != 0) {
-      curLineNum--;
-      curColNum = curLine().size();
-    } else if (curColNum > 0) {
-      curColNum--;
-    }
-    histColNum = curColNum;
-  }
-
-  static void cursorRight() {
-    if (curColNum == curLine().size() && curLineNum < progLines.size() - 1) {
-      curLineNum++;
-      curColNum = 0;
-    } else if (curColNum < curLine().size()) {
-      curColNum++;
-    }
-    histColNum = curColNum;
-  }
-
-  static void cursorUp() {
-    if (curLineNum > 0) {
-      curLineNum--;
-      if (histColNum > curLine().size()) {
-        curColNum = curLine().size();
-      } else {
-        curColNum = histColNum;
-      }
-    }
-  }
-
-  static void cursorDown() {
-    if (curLineNum < progLines.size() - 1) {
-      curLineNum++;
-      if (histColNum > curLine().size()) {
-        curColNum = curLine().size();
-      } else {
-        curColNum = histColNum;
-      }
-    }
+  static void setFocusForm(Form f) {
+    focusForm = f;
   }
 
   public static class Frame extends JFrame {
+
+    Panel codePanel = new Panel(this, codeForm);
+    JScrollPane codeScrollPane = new JScrollPane(codePanel);
+    Panel consolePanel = new Panel(this, consoleForm);
+    JScrollPane consoleScrollPane = new JScrollPane(consolePanel);
+    JSplitPane split = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,
+        codeScrollPane, consoleScrollPane);
 
     public Frame() {
       super("IDE (f5=save+compile+run/f6=save)");
@@ -150,7 +63,7 @@ static final 	Font monospaced = new Font(Font.MONOSPACED, Font.PLAIN, 15);
         @Override
         public void keyTyped(KeyEvent e) {
           char pushed = e.getKeyChar();
-          applyFormInput(pushed);
+          focusForm().applyFormInput(pushed);
           f.repaint();
         }
 
@@ -158,30 +71,33 @@ static final 	Font monospaced = new Font(Font.MONOSPACED, Font.PLAIN, 15);
         public void keyPressed(KeyEvent e) {
           switch (e.getExtendedKeyCode()) {
           case 116: // f5
-            file.writeStringArrayToFile(Silos.IDEFileName, program()
-                .split("\n"));
-           
-
-					
-						{
-						try {
-						
-							Process runtime = Runtime.getRuntime().exec("cmd /c start java -jar Rohan.jar "+Silos.IDEFileName);
-						runtime.waitFor();
-						
-						} catch (Exception ex) {
-							Logger.getLogger(GUI.class.getName()).log(Level.SEVERE, null, ex);
-						}
-					}
-						
-						
+            file.writeStringArrayToFile(Silos.IDEFileName, focusForm()
+                .toString().split("\n"));
+            try {
+              Process runtime = Runtime.getRuntime().exec(
+                  "java -jar Rohan.jar " + Silos.IDEFileName);
+              runtime.waitFor();
+              Scanner res = new Scanner(runtime.getInputStream());
+              while (res.hasNext()) {
+                System.out.println(res.next());
+              }
+              res.close();
+              Scanner res2 = new Scanner(runtime.getErrorStream());
+              while (res2.hasNextLine()) {
+                System.out.println(res2.nextLine());
+              }
+              res2.close();
+            } catch (Exception ex) {
+              Logger.getLogger(GUI.class.getName()).log(Level.SEVERE, null, ex);
+            }
             break;
           case 117: // f6
             break;
           case 17:
             try {
-              applyFormInput((String) Toolkit.getDefaultToolkit()
-                  .getSystemClipboard().getData(DataFlavor.stringFlavor));
+              focusForm().applyFormInput(
+                  (String) Toolkit.getDefaultToolkit().getSystemClipboard()
+                      .getData(DataFlavor.stringFlavor));
             } catch (UnsupportedFlavorException ex) {
               Logger.getLogger(GUI.class.getName()).log(Level.SEVERE, null, ex);
             } catch (IOException ex) {
@@ -189,16 +105,16 @@ static final 	Font monospaced = new Font(Font.MONOSPACED, Font.PLAIN, 15);
             }
             break;
           case 37: // left arrow
-            cursorLeft();
+            focusForm().cursorLeft();
             break;
           case 38: // up arrow
-            cursorUp();
+            focusForm().cursorUp();
             break;
           case 39: // right arrow
-            cursorRight();
+            focusForm().cursorRight();
             break;
           case 40: // down arrow
-            cursorDown();
+            focusForm().cursorDown();
             break;
           }
 
@@ -211,36 +127,85 @@ static final 	Font monospaced = new Font(Font.MONOSPACED, Font.PLAIN, 15);
         }
 
       });
-      this.add(new Panel());
+
+      codeScrollPane.setBackground(Color.black);
+      consoleScrollPane.setBackground(Color.black);
+      split.setBackground(Color.black);
+      this.add(split);
       this.pack();
       this.setBackground(Color.black);
       this.setExtendedState(JFrame.MAXIMIZED_BOTH);
     }
+
+    @Override
+    public void repaint() {
+      codeScrollPane.setViewportView(codePanel);
+      consoleScrollPane.setViewportView(consolePanel);
+      super.repaint();
+    }
+
   }
 
   public static class Panel extends JPanel {
 
     static int screenHeight, screenLength;
+    Form form;
+    Frame frame;
 
-    public Panel() {
+    public Panel(Frame frame, Form form) {
       this.setBackground(Color.black);
+      this.frame = frame;
+      this.form = form;
+      addMouseListener(new MouseAdapter() {
+        @Override
+        public void mousePressed(MouseEvent e) {
+          setFocusForm(getForm());
+          getFrame().repaint();
+        }
+
+        @Override
+        public void mouseReleased(MouseEvent e) {
+        }
+      });
+    }
+
+    Form getForm() {
+      return form;
+    }
+
+    Frame getFrame() {
+      return frame;
     }
 
     @Override
     public Dimension getPreferredSize() {
-      return new Dimension(screenLength, screenHeight);
+      int max = this.getFontMetrics(form.font).stringWidth(
+          new String(new char[80]).replace('\0', ' '));
+      String[] lines = form.toString().split("\n");
+      for (int i = 0; i < lines.length; i++) {
+        int cur = this.getFontMetrics(form.font).stringWidth(lines[i]);
+        if (cur > max) {
+          max = cur;
+        }
+      }
+      return new Dimension(max + 3, screenHeight);
     }
 
     @Override
     public void paintComponent(Graphics g) {
-	g.setFont(monospaced);
-      g.setColor(Color.WHITE);
-      String[] lines = program().split("\n");
+
+      g.setFont(form.font);
+      g.setColor(Color.lightGray);
+      String[] lines = form.toString().split("\n");
       for (int i = 0; i < lines.length; i++) {
         prettyPrint(lines[i], i, g);
       }
-						g.setColor(Color.blue);
-			g.drawLine(curColNum * 9, curLineNum * 15, curColNum * 9, curLineNum * 15 + 15);
+      if (focusForm().equals(form)) {
+        g.setColor(Color.white);
+      } else {
+        g.setColor(Color.gray);
+      }
+      printCursor(g);
     }
 
     /**
@@ -260,7 +225,16 @@ static final 	Font monospaced = new Font(Font.MONOSPACED, Font.PLAIN, 15);
     }
 
     private void prettyPrint(String line, int i, Graphics g) {
-      g.drawString(line, 0, i * 15 + 10);
+      g.drawString(line, 0, i * 15 + 15);
+    }
+
+    private void printCursor(Graphics g) {
+      g.drawLine(form.curColNum * 9, form.curLineNum * 15 + 3,
+          form.curColNum * 9, form.curLineNum * 15 + 18);
+      g.drawLine(form.curColNum * 9 - 2, form.curLineNum * 15 + 3,
+          form.curColNum * 9 + 2, form.curLineNum * 15 + 3);
+      g.drawLine(form.curColNum * 9 - 2, form.curLineNum * 15 + 18,
+          form.curColNum * 9 + 2, form.curLineNum * 15 + 18);
     }
   }
 
@@ -268,4 +242,3 @@ static final 	Font monospaced = new Font(Font.MONOSPACED, Font.PLAIN, 15);
     Frame mainFrame = new Frame();
   }
 }
-
