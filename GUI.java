@@ -36,7 +36,7 @@ import javax.swing.JScrollPane;
  */
 public class GUI {
 
-  static final String[] LANGUAGES = new String[] { "SILOS" };
+  static final String[] LANGUAGES = new String[] { "SILOS","brainf___" };
   static Form codeForm = new EditorForm();
   static Form consoleForm = new ConsoleForm();
   static Form focusForm = codeForm;
