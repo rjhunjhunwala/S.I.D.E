@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.swing.JFileChooser;
 
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 
 /**
@@ -13,33 +13,35 @@ import javax.swing.JFrame;
  */
 
 public class EditorForm extends Form {
-	
-public static String fileName;
-	
+
+  public static String fileName;
+
   public EditorForm() {
-   String program = "";
+    String program = "";
 
-	JFileChooser chooser = new JFileChooser();
+    JFileChooser chooser = new JFileChooser();
 
-int returnVal = chooser.showOpenDialog(null);
-if(returnVal == JFileChooser.APPROVE_OPTION) {
-        File f = chooser.getSelectedFile();
-				try {
-					fileName = f.getCanonicalPath();
-				} catch (IOException ex) {
-					Logger.getLogger(EditorForm.class.getName()).log(Level.SEVERE, null, ex);
-				}
-String[] lineArray = file.getWordsFromFile(f);
-for(int i = 0;i<lineArray.length;i++){
-	System.out.println(lineArray[i]);
-	program+=i==0?lineArray[i]:"\n"+lineArray[i];
-} 
-lines = Form.getLinesFromString(program);
-			lines.add(new ArrayList<Character>());
+    int returnVal = chooser.showOpenDialog(null);
+    if (returnVal == JFileChooser.APPROVE_OPTION) {
+      File f = chooser.getSelectedFile();
+      try {
+        fileName = f.getCanonicalPath();
+      } catch (IOException ex) {
+        Logger.getLogger(EditorForm.class.getName())
+            .log(Level.SEVERE, null, ex);
+      }
+      String[] lineArray = file.getWordsFromFile(f);
+      for (int i = 0; i < lineArray.length; i++) {
+        System.out.println(lineArray[i]);
+        program += i == 0 ? lineArray[i] : "\n" + lineArray[i];
+      }
+      lines = Form.getLinesFromString(program);
+      lines.add(new ArrayList<Character>());
+    }
   }
-		}
+
   public EditorForm(int width) {
-this();
+    lines.add(new ArrayList<Character>());
     this.width = width;
   }
 
@@ -47,25 +49,27 @@ this();
   void clear() {
     List<List<Character>> lines = new ArrayList<List<Character>>();
     lines.add(new ArrayList<Character>());
-    curLineNum = 0;
-    curColNum = 0;
-    histColNum = 0;
+    humanCursor = new Cursor();
   }
 
   @Override
   void addProc(Process proc, JFrame f) {
     // TODO Auto-generated method stub
-
   }
 
   @Override
-  boolean canBackspace() {
+  boolean canBackspace(Cursor cur) {
     return true;
   }
 
   @Override
-  boolean canInsert() {
+  boolean canInsert(Cursor cur) {
     return true;
+  }
+
+  @Override
+  void applyHumanInput(char pushed) {
+    applyFormInput(humanCursor, pushed);
   }
 
 }
