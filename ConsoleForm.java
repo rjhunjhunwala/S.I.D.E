@@ -12,11 +12,8 @@ import javax.swing.JFrame;
 
 public class ConsoleForm extends Form {
 
-  int promptCol = 0;
-  int promptLine = 0;
   Cursor progCursor = new Cursor();
   OutputStream STDIN;
-  ArrayList<Byte> inputAccumulator = new ArrayList<Byte>();
   int inputSep = 10; // newline
 
   public ConsoleForm() {
@@ -34,9 +31,6 @@ public class ConsoleForm extends Form {
     lines.add(new ArrayList<Character>());
     humanCursor = new Cursor();
     progCursor = new Cursor();
-    promptLine = 0;
-    promptCol = 0;
-    inputAccumulator = new ArrayList<Byte>();
   }
 
   @Override
@@ -49,7 +43,8 @@ public class ConsoleForm extends Form {
           do {
             next = proc.getInputStream().read();
             if (next >= 0) {
-              applyFormInput(progCursor, (char) next);
+              applyFormInput(progCursor, (char) next,
+                  new Cursor[] { humanCursor });
               updatePrompt(progCursor);
               if (proc.getInputStream().available() == 0) {
                 f.repaint();
@@ -69,7 +64,8 @@ public class ConsoleForm extends Form {
           do {
             next = proc.getErrorStream().read();
             if (next >= 0) {
-              applyFormInput(progCursor, (char) next);
+              applyFormInput(progCursor, (char) next,
+                  new Cursor[] { humanCursor });
               updatePrompt(progCursor);
               if (proc.getErrorStream().available() == 0) {
                 f.repaint();
@@ -86,44 +82,49 @@ public class ConsoleForm extends Form {
 
   @Override
   boolean canBackspace(Cursor cur) {
-    return cur.line > promptLine
-        || (cur.line == promptLine && cur.col > promptCol);
+    return cur.compareTo(progCursor) > 0;
   }
 
   @Override
   boolean canInsert(Cursor cur) {
-    return cur.line > promptLine
-        || (cur.line == promptLine && cur.col >= promptCol);
+    return cur.compareTo(progCursor) >= 0;
   }
 
   void updatePrompt(Cursor cur) {
     progCursor.match(cur);
     humanCursor.floor(progCursor);
-    this.promptLine = progCursor.line;
-    this.promptCol = progCursor.col;
   }
 
   @Override
   void applyHumanInput(char pushed) {
     if (STDIN != null) {
-      applyFormInput(humanCursor, pushed);
-      inputAccumulator.add((byte) pushed);
+      applyFormInput(humanCursor, pushed, new Cursor[] {});
       if ((int) pushed == inputSep) {
-        byte[] in = new byte[inputAccumulator.size()];
+        ArrayList<Byte> input = inputAccumulator();
+        byte[] in = new byte[input.size()];
         for (int i = 0; i < in.length; i++) {
-          in[i] = inputAccumulator.get(i);
+          in[i] = input.get(i);
         }
         try {
           STDIN.write(in);
           STDIN.flush();
         } catch (IOException e) {
-          // TODO Auto-generated catch block
-          e.printStackTrace();
+          STDIN = null;
+          while (canBackspace(humanCursor)) {
+            applyFormInput(humanCursor, (char) 8, new Cursor[] {});
+          }
         }
-        inputAccumulator.clear();
         updatePrompt(humanCursor);
       }
     }
+  }
+
+  ArrayList<Byte> inputAccumulator() {
+    ArrayList<Byte> res = new ArrayList<Byte>();
+    for (Cursor cur = progCursor.clone(); cur.compareTo(humanCursor) < 0; cursorRight(cur)) {
+      res.add((byte) (char) curChar(cur));
+    }
+    return res;
   }
 
 }
