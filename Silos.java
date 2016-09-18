@@ -135,7 +135,7 @@ public class Silos {
 			height = inHeight;
 		}
 	}
-public static String IDEFileName = null;
+public static String IDEFileName = "234567890-45678900ihb567890oijhb213dsa_TempFILE_v";
 	/**
 	 * The main interpretation code
 	 *
@@ -152,7 +152,6 @@ public static String IDEFileName = null;
 	
 				
 		int[][] program = compile(args.length==0?getStringFromSTDIN("FileName?", sc):args[0]);
-		
 		if(args.length==1){
 			if(args[0].equals(IDEFileName)){
 				interactive = true;

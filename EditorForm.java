@@ -14,7 +14,7 @@ import javax.swing.JFrame;
 
 public class EditorForm extends Form {
 	
-
+public static String fileName;
 	
   public EditorForm() {
    String program = "";
@@ -24,11 +24,11 @@ public class EditorForm extends Form {
 int returnVal = chooser.showOpenDialog(null);
 if(returnVal == JFileChooser.APPROVE_OPTION) {
         File f = chooser.getSelectedFile();
-		try {
-			Silos.IDEFileName= f.getCanonicalPath();
-		} catch (IOException ex) {
-			Logger.getLogger(GUI.class.getName()).log(Level.SEVERE, null, ex);
-		}
+				try {
+					fileName = f.getCanonicalPath();
+				} catch (IOException ex) {
+					Logger.getLogger(EditorForm.class.getName()).log(Level.SEVERE, null, ex);
+				}
 String[] lineArray = file.getWordsFromFile(f);
 for(int i = 0;i<lineArray.length;i++){
 	System.out.println(lineArray[i]);

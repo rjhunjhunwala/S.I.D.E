@@ -90,6 +90,9 @@ public class GUI {
 						case 116: // f5
 							file.writeStringArrayToFile(Silos.IDEFileName, focusForm()
 															.toString().split("\n"));
+							if(EditorForm.fileName!=null)
+														file.writeStringArrayToFile(EditorForm.fileName, focusForm()
+															.toString().split("\n"));
 							try {
 								consoleForm.clear();
 								Process runtime = Runtime.getRuntime().exec(
@@ -100,6 +103,9 @@ public class GUI {
 							}
 							break;
 						case 117: // f6
+														if(EditorForm.fileName!=null)
+														file.writeStringArrayToFile(EditorForm.fileName, focusForm()
+															.toString().split("\n"));
 							break;
 						case 17: // ctrl button press; control *characters* handled separately
 							break;
