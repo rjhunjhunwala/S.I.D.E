@@ -13,25 +13,56 @@ public abstract class Form {
   final Font monospaced = new Font(Font.MONOSPACED, Font.PLAIN, 15);
   final Font font = monospaced;
   List<List<Character>> lines = new ArrayList<List<Character>>();
-  int curLineNum = 0;
-  int curColNum = 0;
-  int histColNum = 0; // based on fancy formatting
+  Cursor humanCursor = new Cursor();
   int width = 80;
-public static List<List<Character>> getLinesFromString(String s){
-	List<List<Character>> out = new ArrayList<>();
-	String[] lineArray = s.split("\n");
-	for(String line:lineArray){
-	 out.add(new ArrayList<Character>());
-		for(char c:line.toCharArray()){
-			out.get(out.size()-1).add(c);
-		}
-	}
-	return out;
-}
-  int fancyColNum() {
+
+  public static List<List<Character>> getLinesFromString(String s) {
+    List<List<Character>> out = new ArrayList<>();
+    String[] lineArray = s.split("\n");
+    for (String line : lineArray) {
+      out.add(new ArrayList<Character>());
+      for (char c : line.toCharArray()) {
+        out.get(out.size() - 1).add(c);
+      }
+    }
+    return out;
+  }
+
+  static class Cursor {
+    int line = 0;
+    int col = 0;
+    int histcol = 0; // based on fancy formatting
+
+    Cursor() {
+    }
+
+    Cursor(int l, int c) {
+      line = l;
+      col = c;
+    }
+
+    void match(Cursor cur) {
+      line = cur.line;
+      col = cur.col;
+      histcol = cur.histcol;
+    }
+
+    void floor(Cursor cur) {
+      if (line < cur.line || (line == cur.line && col < cur.col)) {
+        match(cur);
+      }
+    }
+
+  }
+
+  int humanColNum() {
+    return fancyColNum(humanCursor.line, humanCursor.col);
+  }
+
+  int fancyColNum(int line, int col) {
     int width = 0;
-    for (int c = 0; c < curColNum; c++) {
-      char ch = curLine().get(c);
+    for (int c = 0; c < col; c++) {
+      char ch = lines.get(line).get(c);
       if ((int) ch == 9) {
         do {
           width++;
@@ -43,16 +74,20 @@ public static List<List<Character>> getLinesFromString(String s){
     return width;
   }
 
-  int fancyLineNum() {
-    return curLineNum;
+  int humanLineNum() {
+    return fancyLineNum(humanCursor.line);
   }
 
-  int defancyColNum(int goal) {
+  int fancyLineNum(int line) {
+    return line;
+  }
+
+  int defancyColNum(int line, int goal) {
     // inverse of fancyColNum, used for vertical movement
     int width = 0;
     int c = 0;
-    while (width < goal && c < curLine().size()) {
-      char ch = curLine().get(c);
+    while (width < goal && c < lines.get(line).size()) {
+      char ch = lines.get(line).get(c);
       if ((int) ch == 9) {
         do {
           width++;
@@ -68,12 +103,12 @@ public static List<List<Character>> getLinesFromString(String s){
     return c;
   }
 
-  int defancyLineNum() {
-    return curLineNum;
+  int defancyLineNum(int line) {
+    return line;
   }
 
-  List<Character> curLine() {
-    return lines.get(curLineNum);
+  List<Character> curLine(Cursor cur) {
+    return lines.get(cur.line);
   }
 
   public String toString() {
@@ -89,9 +124,9 @@ public static List<List<Character>> getLinesFromString(String s){
     return res;
   }
 
-  abstract boolean canBackspace();
+  abstract boolean canBackspace(Cursor cur);
 
-  abstract boolean canInsert();
+  abstract boolean canInsert(Cursor cur);
 
   public String[] formatLines() {
     ArrayList<String> res = new ArrayList<String>();
@@ -117,98 +152,122 @@ public static List<List<Character>> getLinesFromString(String s){
     return (String[]) res.toArray(new String[] {});
   }
 
-  void applyFormInput(String s) {
+  void applyFormInput(Cursor cur, String s) {
     for (Character pushed : s.toCharArray()) {
-      applyFormInput(pushed);
+      applyFormInput(cur, pushed);
     }
   }
 
-  void applyFormInput(char pushed) {
+  void applyFormInput(Cursor cur, char pushed) {
     if ((int) pushed == 8) {
-      if (canBackspace()) {
-        if (curColNum == 0 && curLineNum != 0) {
-          int newColNum = lines.get(curLineNum - 1).size();
-          lines.get(curLineNum - 1).addAll(curLine());
-          lines.remove(curLineNum);
-          curLineNum--;
-          curColNum = newColNum;
-        } else if (curColNum > 0) {
-          curLine().remove(curColNum - 1);
-          curColNum--;
+      if (canBackspace(cur)) {
+        if (cur.col == 0 && cur.line != 0) {
+          int newColNum = lines.get(cur.line - 1).size();
+          lines.get(cur.line - 1).addAll(curLine(cur));
+          lines.remove(cur.line);
+          cur.line--;
+          cur.col = newColNum;
+        } else if (cur.col > 0) {
+          curLine(cur).remove(cur.col - 1);
+          cur.col--;
         }
       }
-    } else if (canInsert()) {
+    } else if (canInsert(cur)) {
       if ((int) pushed == 127) {
         // add delete functionality
       } else if ((int) pushed == 10) {
-        List<Character> newLine = curLine()
-            .subList(curColNum, curLine().size());
-        lines.add(curLineNum + 1, new ArrayList<Character>(newLine));
+        List<Character> newLine = curLine(cur).subList(cur.col,
+            curLine(cur).size());
+        lines.add(cur.line + 1, new ArrayList<Character>(newLine));
         newLine.clear();
-        curLineNum++;
-        curColNum = 0;
+        cur.line++;
+        cur.col = 0;
       } else if ((int) pushed == 9 || (int) pushed >= 32) {
-        curLine().add(curColNum, pushed);
-        curColNum++;
+        curLine(cur).add(cur.col, pushed);
+        cur.col++;
       } else {
-        // curLine().add(curColNum, '?');
+        // curLine().add(cur.col, '?');
         // applyFormInput(";"+(int)pushed);
-        // curColNum++;
+        // cur.col++;
       }
     }
-    histColNum = fancyColNum();
+    cur.histcol = fancyColNum(cur.line, cur.col);
   }
 
-  void cursorLeft() {
-    if (curColNum == 0 && curLineNum != 0) {
-      curLineNum--;
-      curColNum = curLine().size();
-    } else if (curColNum > 0) {
-      curColNum--;
+  void applyHumanInput(String s) {
+    for (Character pushed : s.toCharArray()) {
+      applyHumanInput(pushed);
     }
-    histColNum = fancyColNum();
   }
 
-  void cursorRight() {
-    if (curColNum == curLine().size() && curLineNum < lines.size() - 1) {
-      curLineNum++;
-      curColNum = 0;
-    } else if (curColNum < curLine().size()) {
-      curColNum++;
+  abstract void applyHumanInput(char pushed);
+
+  void humanCursorLeft() {
+    cursorLeft(humanCursor);
+  }
+
+  void cursorLeft(Cursor cur) {
+    if (cur.col == 0 && cur.line != 0) {
+      cur.line--;
+      cur.col = curLine(cur).size();
+    } else if (cur.col > 0) {
+      cur.col--;
     }
-    histColNum = fancyColNum();
+    cur.histcol = fancyColNum(cur.line, cur.col);
   }
 
-  void cursorUp() {
-    if (curLineNum > 0) {
-      curLineNum--;
-      int targCol = defancyColNum(histColNum);
-      if (targCol > curLine().size()) {
-        curColNum = curLine().size();
+  void humanCursorRight() {
+    cursorRight(humanCursor);
+  }
+
+  void cursorRight(Cursor cur) {
+    if (cur.col == curLine(cur).size() && cur.line < lines.size() - 1) {
+      cur.line++;
+      cur.col = 0;
+    } else if (cur.col < curLine(cur).size()) {
+      cur.col++;
+    }
+    cur.histcol = fancyColNum(cur.line, cur.col);
+  }
+
+  void humanCursorUp() {
+    cursorUp(humanCursor);
+  }
+
+  void cursorUp(Cursor cur) {
+    if (cur.line > 0) {
+      cur.line--;
+      int targCol = defancyColNum(cur.line, cur.histcol);
+      if (targCol > curLine(cur).size()) {
+        cur.col = curLine(cur).size();
       } else {
-        curColNum = targCol;
+        cur.col = targCol;
       }
     }
   }
 
-  void cursorDown() {
-    if (curLineNum < lines.size() - 1) {
-      curLineNum++;
-      int targCol = defancyColNum(histColNum);
-      if (targCol > curLine().size()) {
-        curColNum = curLine().size();
+  void humanCursorDown() {
+    cursorDown(humanCursor);
+  }
+
+  void cursorDown(Cursor cur) {
+    if (cur.line < lines.size() - 1) {
+      cur.line++;
+      int targCol = defancyColNum(cur.line, cur.histcol);
+      if (targCol > curLine(cur).size()) {
+        cur.col = curLine(cur).size();
       } else {
-        curColNum = targCol;
+        cur.col = targCol;
       }
     }
   }
 
-  void cursorEnd() {
-    curColNum = lines.get(curLineNum).size();
+  void cursorEnd(Cursor cur) {
+    cur.col = lines.get(cur.line).size();
   }
 
-  void cursorHome() {
-    curColNum = 0;
+  void cursorHome(Cursor cur) {
+    cur.col = 0;
   }
 
   abstract void clear();
