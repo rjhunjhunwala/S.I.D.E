@@ -115,6 +115,7 @@ public class ConsoleForm extends Form {
         }
         try {
           STDIN.write(in);
+          STDIN.flush();
         } catch (IOException e) {
           // TODO Auto-generated catch block
           e.printStackTrace();
