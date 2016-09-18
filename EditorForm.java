@@ -36,8 +36,9 @@ public class EditorForm extends Form {
         program += i == 0 ? lineArray[i] : "\n" + lineArray[i];
       }
       lines = Form.getLinesFromString(program);
-      lines.add(new ArrayList<Character>());
-    }
+				}
+						lines.add(new ArrayList<Character>());
+    
   }
 
   public EditorForm(int width) {
