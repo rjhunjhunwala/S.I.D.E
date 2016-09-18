@@ -28,7 +28,7 @@ public abstract class Form {
     return out;
   }
 
-  static class Cursor {
+  static class Cursor implements Comparable {
     int line = 0;
     int col = 0;
     int histcol = 0; // based on fancy formatting
@@ -51,6 +51,22 @@ public abstract class Form {
       if (line < cur.line || (line == cur.line && col < cur.col)) {
         match(cur);
       }
+    }
+
+    @Override
+    public int compareTo(Object arg0) {
+      if (arg0 instanceof Cursor) {
+        Cursor cur = (Cursor) arg0;
+        if (line != cur.line) {
+          return line - cur.line;
+        }
+        return col - cur.col;
+      }
+      return 0;
+    }
+
+    protected Cursor clone() {
+      return new Cursor(line, col);
     }
 
   }
@@ -111,6 +127,17 @@ public abstract class Form {
     return lines.get(cur.line);
   }
 
+  Character curChar(Cursor cur) {
+    List<Character> line = curLine(cur);
+    if (cur.col < line.size()) {
+      return line.get(cur.col);
+    } else if (cur.col == line.size() && cur.line < lines.size() - 1) {
+      return (char) 10;
+    } else {
+      return null;
+    }
+  }
+
   public String toString() {
     String res = "";
     for (int l = 0; l < lines.size(); l++) {
@@ -152,13 +179,13 @@ public abstract class Form {
     return (String[]) res.toArray(new String[] {});
   }
 
-  void applyFormInput(Cursor cur, String s) {
+  void applyFormInput(Cursor cur, String s, Cursor[] toAdjust) {
     for (Character pushed : s.toCharArray()) {
-      applyFormInput(cur, pushed);
+      applyFormInput(cur, pushed, toAdjust);
     }
   }
 
-  void applyFormInput(Cursor cur, char pushed) {
+  void applyFormInput(Cursor cur, char pushed, Cursor[] toAdjust) {
     if ((int) pushed == 8) {
       if (canBackspace(cur)) {
         if (cur.col == 0 && cur.line != 0) {
@@ -167,23 +194,42 @@ public abstract class Form {
           lines.remove(cur.line);
           cur.line--;
           cur.col = newColNum;
+          // TODO adjustment
         } else if (cur.col > 0) {
           curLine(cur).remove(cur.col - 1);
+          for (Cursor tA : toAdjust) {
+            if (tA.line == cur.line && tA.col >= cur.col) {
+              tA.col--;
+            }
+          }
           cur.col--;
         }
       }
     } else if (canInsert(cur)) {
       if ((int) pushed == 127) {
-        // add delete functionality
+        // TODO add delete functionality
       } else if ((int) pushed == 10) {
         List<Character> newLine = curLine(cur).subList(cur.col,
             curLine(cur).size());
         lines.add(cur.line + 1, new ArrayList<Character>(newLine));
         newLine.clear();
+        for (Cursor tA : toAdjust) {
+          if (tA.line == cur.line && tA.col >= cur.col) {
+            tA.col -= cur.col;
+            tA.line++;
+          } else if (tA.line > cur.line) {
+            tA.line++;
+          }
+        }
         cur.line++;
         cur.col = 0;
       } else if ((int) pushed == 9 || (int) pushed >= 32) {
         curLine(cur).add(cur.col, pushed);
+        for (Cursor tA : toAdjust) {
+          if (tA.line == cur.line && tA.col >= cur.col) {
+            tA.col++;
+          }
+        }
         cur.col++;
       } else {
         // curLine().add(cur.col, '?');
