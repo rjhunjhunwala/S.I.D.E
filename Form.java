@@ -17,7 +17,17 @@ public abstract class Form {
   int curColNum = 0;
   int histColNum = 0; // based on fancy formatting
   int width = 80;
-
+public static List<List<Character>> getLinesFromString(String s){
+	List<List<Character>> out = new ArrayList<>();
+	String[] lineArray = s.split("\n");
+	for(String line:lineArray){
+	 out.add(new ArrayList<Character>());
+		for(char c:line.toCharArray()){
+			out.get(out.size()-1).add(c);
+		}
+	}
+	return out;
+}
   int fancyColNum() {
     int width = 0;
     for (int c = 0; c < curColNum; c++) {

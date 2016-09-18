@@ -135,16 +135,16 @@ public class Silos {
 			height = inHeight;
 		}
 	}
-public static final String IDEFileName = "TEMPFILE_1518259122315123_SILOS_V";
+public static String IDEFileName = null;
 	/**
 	 * The main interpretation code
 	 *
 	 * @param args the command line arguments to be passed from the online
 	 * interpreter the first argument represents a fileName, and the rest
 	 * represent a source of input Feeding in any number of command line arguments
-	 * will generally disable interactivity. Interactivity can be forced enabled by
-	 * Toggling safeMOdeEnabled into false
+	 * will generally disable interactivity. 
 	 */
+
 	public static void main(String... args) {
 		Stack<Integer> stack = new Stack<>();
 		Scanner sc = new Scanner(System.in);
@@ -1053,7 +1053,7 @@ public static final String IDEFileName = "TEMPFILE_1518259122315123_SILOS_V";
 		}
 		return null;
 	}
-
+public static String program = "";
 	/**
 	 * Evaluates a token by figuring out whether it is an integer literal or a
 	 * variable

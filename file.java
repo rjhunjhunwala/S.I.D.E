@@ -8,7 +8,10 @@
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
+import java.io.IOException;
 import java.util.Scanner;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /*
  * To change this license header, choose License Headers in Project Properties.
@@ -70,6 +73,32 @@ public class file {
 		int i = 0;
 		try {
 			File textFile = new File(fileName);
+			Scanner sc = new Scanner(textFile);
+			for (i = 0; i < lengthOfFile; i++) {
+			wordBank[i] = sc.nextLine();
+			}
+			return wordBank;
+		} catch (Exception e) {
+			System.err.println(e);
+			System.exit(55);
+		}
+		return null;
+	}/**
+	 *
+	 * @param fileName is the path to the file or just the name if it is local
+	 * @return an array of Strings where each string is one line from the file
+	 * fileName.
+	 */
+	public static String[] getWordsFromFile(File textFile){
+				int lengthOfFile=0;
+		try {
+			lengthOfFile = getLengthOfFile(textFile.getCanonicalPath());
+		} catch (IOException ex) {
+			Logger.getLogger(file.class.getName()).log(Level.SEVERE, null, ex);
+		}
+		String[] wordBank=new String[lengthOfFile];
+		int i = 0;
+		try {
 			Scanner sc = new Scanner(textFile);
 			for (i = 0; i < lengthOfFile; i++) {
 			wordBank[i] = sc.nextLine();

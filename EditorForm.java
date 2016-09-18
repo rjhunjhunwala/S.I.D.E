@@ -1,5 +1,10 @@
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.JFileChooser;
 
 import javax.swing.JFrame;
 
@@ -8,13 +13,33 @@ import javax.swing.JFrame;
  */
 
 public class EditorForm extends Form {
+	
 
+	
   public EditorForm() {
-    lines.add(new ArrayList<Character>());
-  }
+   String program = "";
 
+	JFileChooser chooser = new JFileChooser();
+
+int returnVal = chooser.showOpenDialog(null);
+if(returnVal == JFileChooser.APPROVE_OPTION) {
+        File f = chooser.getSelectedFile();
+		try {
+			Silos.IDEFileName= f.getCanonicalPath();
+		} catch (IOException ex) {
+			Logger.getLogger(GUI.class.getName()).log(Level.SEVERE, null, ex);
+		}
+String[] lineArray = file.getWordsFromFile(f);
+for(int i = 0;i<lineArray.length;i++){
+	System.out.println(lineArray[i]);
+	program+=i==0?lineArray[i]:"\n"+lineArray[i];
+} 
+lines = Form.getLinesFromString(program);
+			lines.add(new ArrayList<Character>());
+  }
+		}
   public EditorForm(int width) {
-    lines.add(new ArrayList<Character>());
+this();
     this.width = width;
   }
 
