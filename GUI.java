@@ -59,11 +59,24 @@ public class GUI {
       this.setVisible(true);
       this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
       final Frame f = this;
+      this.setFocusTraversalKeysEnabled(false);
       this.addKeyListener(new KeyListener() {
         @Override
         public void keyTyped(KeyEvent e) {
           char pushed = e.getKeyChar();
-          focusForm().applyFormInput(pushed);
+          if ((int) pushed == 22) {
+            try {
+              focusForm().applyFormInput(
+                  (String) Toolkit.getDefaultToolkit().getSystemClipboard()
+                      .getData(DataFlavor.stringFlavor));
+            } catch (UnsupportedFlavorException ex) {
+              Logger.getLogger(GUI.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (IOException ex) {
+              Logger.getLogger(GUI.class.getName()).log(Level.SEVERE, null, ex);
+            }
+          } else {
+            focusForm().applyFormInput(pushed);
+          }
           f.repaint();
         }
 
@@ -74,35 +87,17 @@ public class GUI {
             file.writeStringArrayToFile(Silos.IDEFileName, focusForm()
                 .toString().split("\n"));
             try {
+              consoleForm.clear();
               Process runtime = Runtime.getRuntime().exec(
                   "java -jar Rohan.jar " + Silos.IDEFileName);
-              runtime.waitFor();
-              Scanner res = new Scanner(runtime.getInputStream());
-              while (res.hasNext()) {
-                System.out.println(res.next());
-              }
-              res.close();
-              Scanner res2 = new Scanner(runtime.getErrorStream());
-              while (res2.hasNextLine()) {
-                System.out.println(res2.nextLine());
-              }
-              res2.close();
+              consoleForm.addProc(runtime, f);
             } catch (Exception ex) {
               Logger.getLogger(GUI.class.getName()).log(Level.SEVERE, null, ex);
             }
             break;
           case 117: // f6
             break;
-          case 17:
-            try {
-              focusForm().applyFormInput(
-                  (String) Toolkit.getDefaultToolkit().getSystemClipboard()
-                      .getData(DataFlavor.stringFlavor));
-            } catch (UnsupportedFlavorException ex) {
-              Logger.getLogger(GUI.class.getName()).log(Level.SEVERE, null, ex);
-            } catch (IOException ex) {
-              Logger.getLogger(GUI.class.getName()).log(Level.SEVERE, null, ex);
-            }
+          case 17: // ctrl button press; control *characters* handled separately
             break;
           case 37: // left arrow
             focusForm().cursorLeft();
@@ -116,6 +111,8 @@ public class GUI {
           case 40: // down arrow
             focusForm().cursorDown();
             break;
+          default:
+            // focusForm().applyFormInput(":"+e.getExtendedKeyCode());
           }
 
           f.repaint();
@@ -181,7 +178,7 @@ public class GUI {
     public Dimension getPreferredSize() {
       int max = this.getFontMetrics(form.font).stringWidth(
           new String(new char[80]).replace('\0', ' '));
-      String[] lines = form.toString().split("\n");
+      String[] lines = form.formatLines();
       for (int i = 0; i < lines.length; i++) {
         int cur = this.getFontMetrics(form.font).stringWidth(lines[i]);
         if (cur > max) {
@@ -196,7 +193,7 @@ public class GUI {
 
       g.setFont(form.font);
       g.setColor(Color.lightGray);
-      String[] lines = form.toString().split("\n");
+      String[] lines = form.formatLines();
       for (int i = 0; i < lines.length; i++) {
         prettyPrint(lines[i], i, g);
       }
@@ -229,16 +226,16 @@ public class GUI {
     }
 
     private void printCursor(Graphics g) {
-      g.drawLine(form.curColNum * 9, form.curLineNum * 15 + 3,
-          form.curColNum * 9, form.curLineNum * 15 + 18);
-      g.drawLine(form.curColNum * 9 - 2, form.curLineNum * 15 + 3,
-          form.curColNum * 9 + 2, form.curLineNum * 15 + 3);
-      g.drawLine(form.curColNum * 9 - 2, form.curLineNum * 15 + 18,
-          form.curColNum * 9 + 2, form.curLineNum * 15 + 18);
+      int col = form.fancyColNum();
+      int line = form.fancyLineNum();
+      g.drawLine(col * 9, line * 15 + 3, col * 9, line * 15 + 18);
+      g.drawLine(col * 9 - 2, line * 15 + 3, col * 9 + 2, line * 15 + 3);
+      g.drawLine(col * 9 - 2, line * 15 + 18, col * 9 + 2, line * 15 + 18);
     }
   }
 
   public static void runGUI() {
+    // System.out.println(Thread.currentThread().getName());
     Frame mainFrame = new Frame();
   }
 }
