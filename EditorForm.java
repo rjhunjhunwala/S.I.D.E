@@ -31,7 +31,6 @@ public class EditorForm extends Form {
       }
       String[] lineArray = file.getWordsFromFile(f);
       for (int i = 0; i < lineArray.length; i++) {
-        System.out.println(lineArray[i]);
         program += i == 0 ? lineArray[i] : "\n" + lineArray[i];
       }
       lines = Form.getLinesFromString(program);
