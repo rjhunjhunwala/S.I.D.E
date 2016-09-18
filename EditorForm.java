@@ -20,7 +20,6 @@ public class EditorForm extends Form {
     String program = "";
 
     JFileChooser chooser = new JFileChooser();
-
     int returnVal = chooser.showOpenDialog(null);
     if (returnVal == JFileChooser.APPROVE_OPTION) {
       File f = chooser.getSelectedFile();
@@ -36,9 +35,11 @@ public class EditorForm extends Form {
         program += i == 0 ? lineArray[i] : "\n" + lineArray[i];
       }
       lines = Form.getLinesFromString(program);
-				}
-						lines.add(new ArrayList<Character>());
-    
+      lines.add(new ArrayList<Character>());
+    } else {
+      lines = new ArrayList<List<Character>>();
+      lines.add(new ArrayList<Character>());
+    }
   }
 
   public EditorForm(int width) {
@@ -70,7 +71,7 @@ public class EditorForm extends Form {
 
   @Override
   void applyHumanInput(char pushed) {
-    applyFormInput(humanCursor, pushed);
+    applyFormInput(humanCursor, pushed, new Cursor[] {});
   }
 
 }
