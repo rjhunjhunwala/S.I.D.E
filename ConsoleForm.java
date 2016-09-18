@@ -27,15 +27,19 @@ public class ConsoleForm extends Form {
 
   @Override
   void clear() {
-    lines = new ArrayList<List<Character>>();
+  if(lastProcess!=null){
+			lastProcess.destroyForcibly();
+		}
+			lines = new ArrayList<List<Character>>();
     lines.add(new ArrayList<Character>());
     humanCursor = new Cursor();
     progCursor = new Cursor();
   }
-
+Process lastProcess = null;
   @Override
   void addProc(final Process proc, final JFrame f) {
-    STDIN = proc.getOutputStream();
+   lastProcess = proc; 
+			STDIN = proc.getOutputStream();
     new Thread("STDOUT") {
       public void run() {
         try {

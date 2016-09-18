@@ -36,7 +36,7 @@ import javax.swing.JScrollPane;
  */
 public class GUI {
 
-  static final String[] LANGUAGES = new String[] { "SILOS", "brainf___", "test" };
+  static final String[] LANGUAGES = new String[] { "SILOS", "brainf___" };
   static Form codeForm = new EditorForm();
   static Form consoleForm = new ConsoleForm();
   static Form focusForm = codeForm;
@@ -94,6 +94,7 @@ public class GUI {
               file.writeStringArrayToFile(EditorForm.fileName, focusForm()
                   .toString().split("\n"));
             try {
+										
               consoleForm.clear();
               Process runtime = Runtime.getRuntime().exec(
                   "java -jar " + LANGUAGE + ".jar " + Silos.IDEFileName);
