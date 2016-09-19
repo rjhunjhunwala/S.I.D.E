@@ -15,6 +15,9 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
@@ -61,7 +64,38 @@ public class GUI {
 		public Frame() {
 			super("IDE (f5=save+compile+run/f6=save)");
 			this.setVisible(true);
-			this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
+			WindowListener exitListener = new WindowAdapter() {
+
+				@Override
+				public void windowClosing(WindowEvent e) {
+					if (ConsoleForm.lastProcess != null) {
+						ConsoleForm.lastProcess.destroyForcibly();
+					}
+					int dialogResult = JOptionPane.showConfirmDialog(null, "Would You Like to Save your Code First?", "Warning", 0);
+					if (dialogResult == JOptionPane.YES_OPTION) {
+						if (EditorForm.fileName != null && !EditorForm.fileName.equals("")) {
+							file.writeStringArrayToFile(EditorForm.fileName, focusForm().toString().split("\n"));
+						} else {
+							JFileChooser chooser = new JFileChooser();
+							int returnVal = chooser.showOpenDialog(null);
+							if (returnVal == JFileChooser.APPROVE_OPTION) {
+								File f = chooser.getSelectedFile();
+								String fileName = "";
+								try {
+									fileName = f.getCanonicalPath();
+								} catch (IOException ex) {
+								}
+								if (!"".equals(fileName)) {
+									file.writeStringArrayToFile(fileName, focusForm().toString().split("\n"));
+								}
+							}
+						}
+					}
+					System.exit(0);
+				}
+			};
+			this.addWindowListener(exitListener);
 			final Frame f = this;
 			this.setFocusTraversalKeysEnabled(false);
 			this.addKeyListener(new KeyListener() {
@@ -148,6 +182,7 @@ public class GUI {
 		}
 
 		@Override
+
 		public void repaint() {
 			codeScrollPane.setViewportView(codePanel);
 			consoleScrollPane.setViewportView(consolePanel);
@@ -207,8 +242,7 @@ public class GUI {
 			g.setFont(form.font);
 			g.setColor(Color.lightGray);
 			String[] lines = form.formatLines();
-			int l = form.humanCursor.line * 15+350;
-			System.out.println(l);
+			int l = form.humanCursor.line * 15 + 350;
 			for (int i = 0; i < lines.length; i++) {
 				prettyPrint(l, lines[i], i, g);
 			}
@@ -217,7 +251,7 @@ public class GUI {
 			} else {
 				g.setColor(Color.gray);
 			}
-			printCursor(g,l);
+			printCursor(g, l);
 		}
 
 		/**
@@ -241,21 +275,21 @@ public class GUI {
 			int y = i * 15 + 15;
 			if (l > maxYHeight) {
 				y -= l;
-				y+=maxYHeight;
+				y += maxYHeight;
 			}
 			if (y > 0) {
 				g.drawString(line, 0, y);
 			}
 		}
 
-		private void printCursor(Graphics g,int l) {
+		private void printCursor(Graphics g, int l) {
 			int col = form.humanColNum();
 			int line = form.humanLineNum();
-						int maxYHeight = getPreferredSize().height;
-			int y = line*15;
+			int maxYHeight = getPreferredSize().height;
+			int y = line * 15;
 			if (l > maxYHeight) {
 				y -= l;
-				y+=maxYHeight;
+				y += maxYHeight;
 			}
 			g.drawLine(col * 9, y + 3, col * 9, y + 18);
 			g.drawLine(col * 9 - 2, y + 3, col * 9 + 2, y + 3);

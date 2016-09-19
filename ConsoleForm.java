@@ -35,11 +35,10 @@ public class ConsoleForm extends Form {
     humanCursor = new Cursor();
     progCursor = new Cursor();
   }
-Process lastProcess = null;
+static Process lastProcess = null;
   @Override
   void addProc(final Process proc, final JFrame f) {
    lastProcess = proc; 
-			STDIN = proc.getOutputStream();
     new Thread("STDOUT") {
       public void run() {
         try {
