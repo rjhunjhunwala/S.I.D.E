@@ -68,7 +68,9 @@ public class file {
 	 * fileName.
 	 */
 	public static String[] getWordsFromFile(String fileName) {
-				int lengthOfFile = getLengthOfFile(fileName);
+
+		int lengthOfFile = getLengthOfFile(fileName);
+		
 		String[] wordBank=new String[lengthOfFile];
 		int i = 0;
 		try {
@@ -80,7 +82,6 @@ public class file {
 			return wordBank;
 		} catch (Exception e) {
 			System.err.println(e);
-			System.exit(55);
 		}
 		return null;
 	}/**
@@ -106,9 +107,9 @@ public class file {
 			return wordBank;
 		} catch (Exception e) {
 			System.err.println(e);
-			System.exit(55);
+			return null;
 		}
-		return null;
+		
 	}
 		/**
 	 *

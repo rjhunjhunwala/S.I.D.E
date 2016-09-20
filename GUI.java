@@ -39,6 +39,11 @@ import javax.swing.JScrollPane;
  */
 public class GUI {
 
+	static ArrayList<String> lineRegexes = new ArrayList<>();
+	static ArrayList<Color> lineColors = new ArrayList<>();
+	static ArrayList<String> wordRegexes = new ArrayList<>();
+	static ArrayList<Color> wordColors = new ArrayList<>();
+
 	static final String[] LANGUAGES = new String[]{"SILOS", "brainf___"};
 	static Form codeForm = new EditorForm();
 	static Form consoleForm = new ConsoleForm();
@@ -242,7 +247,7 @@ public class GUI {
 			g.setFont(form.font);
 			g.setColor(Color.lightGray);
 			String[] lines = form.formatLines();
-			int l = form.humanCursor.line * 15 + 350;
+			int l = form.humanCursor.line * CHARHEIGHT + 350;
 			for (int i = 0; i < lines.length; i++) {
 				prettyPrint(l, lines[i], i, g);
 			}
@@ -272,13 +277,44 @@ public class GUI {
 		private void prettyPrint(int l, String line, int i, Graphics g) {
 
 			int maxYHeight = getPreferredSize().height;
-			int y = i * 15 + 15;
+			int y = i * CHARHEIGHT + CHARHEIGHT;
 			if (l > maxYHeight) {
 				y -= l;
 				y += maxYHeight;
 			}
+
 			if (y > 0) {
-				g.drawString(line, 0, y);
+				int lineMatch = -1;
+				for (int in = 0; in < lineRegexes.size(); in++) {
+					if (line.matches(lineRegexes.get(in))) {
+						lineMatch = in;
+						break;
+					}
+				}
+				if (lineMatch != -1) {
+					g.setColor(lineColors.get(lineMatch));
+					g.drawString(line, 0, y);
+				} else {
+					int xDraw = 0;
+					String[] words = line.split(" ");
+					for (String w : words) {
+						Color c = Color.white;
+						int wordMatch = -1;
+						for (int in = 0; in < wordRegexes.size(); in++) {
+							if (w.matches(wordRegexes.get(in))) {
+								wordMatch = in;
+								break;
+							}
+						}
+						if (wordMatch != -1) {
+							c = wordColors.get(wordMatch);
+						}
+						g.setColor(c);
+						g.drawString(w, xDraw, y);
+						xDraw += w.length() * CHARWIDTH +CHARWIDTH;
+					}
+				}
+
 			}
 		}
 
@@ -286,23 +322,61 @@ public class GUI {
 			int col = form.humanColNum();
 			int line = form.humanLineNum();
 			int maxYHeight = getPreferredSize().height;
-			int y = line * 15;
+			int y = line * CHARHEIGHT;
 			if (l > maxYHeight) {
 				y -= l;
 				y += maxYHeight;
 			}
-			g.drawLine(col * 9, y + 3, col * 9, y + 18);
-			g.drawLine(col * 9 - 2, y + 3, col * 9 + 2, y + 3);
-			g.drawLine(col * 9 - 2, y + 18, col * 9 + 2, y + 18);
+			g.drawLine(col * CHARWIDTH, y + 3, col * CHARWIDTH, y + 18);
+			g.drawLine(col * CHARWIDTH - 2, y + 3, col * CHARWIDTH + 2, y + 3);
+			g.drawLine(col * CHARWIDTH - 2, y + 18, col * CHARWIDTH + 2, y + 18);
 		}
 	}
 
+	public static final int CHARWIDTH = 9;
+	public static final int CHARHEIGHT = 15;
 	public static final String LANGUAGE = (String) JOptionPane.showInputDialog(
 									null, "Choose a language to develop in.", "Which language?",
 									JOptionPane.QUESTION_MESSAGE, null, LANGUAGES, "SILOS");
 
 	public static void runGUI() {
+		String[] highlights = file.getWordsFromFile(LANGUAGE + "!COLOR.txt");
+		boolean onLines = true;
+		int counter = -1;
+		if (highlights != null) {
+			for (String highlight : highlights) {
+				if (highlight.equals("END_LINES")) {
+					onLines = false;
+					continue;
+				}
+				counter++;
+				boolean isEven = counter % 2 == 0;
+				int x = 0, y = 0, z = 0;
+				Color c = null;
+				if (!isEven) {
+					String[] split = highlight.split(" ");
+					x = Integer.parseInt(split[0]);
+					y = Integer.parseInt(split[1]);
+					z = Integer.parseInt(split[2]);
+					c = new Color(x, y, z);
+				}
+				if (onLines) {
+					if (isEven) {
+						lineRegexes.add(highlight);
+					} else {
+						lineColors.add(c);
+					}
 
+				} else {
+					if (isEven) {
+						wordRegexes.add(highlight);
+					} else {
+						wordColors.add(c);
+					}
+				}
+			}
+
+		}
 		Frame mainFrame = new Frame();
 	}
 }
