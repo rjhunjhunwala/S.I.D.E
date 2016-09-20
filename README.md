@@ -1,11 +1,11 @@
 # S.I.D.E
 The Simple IDE for a Modern Age
-<h1>Features planned</h1>
+<h1>Features</h1>
 <ul>
 <li>
 Integrated support for [SIL](https://github.com/rjhunjhunwala/S.I.L.O.S)
 </li>
-<li>Extensible support for arbitrary languages</li>
+<li>Extensible support for arbitrary languages (currently only brainf*** is supported (as well as SIL))</li>
 <li>Customisable Syntax highlighting</li>
 <li>Likely  a default dark theme (because it looks better)</li>
 </ul>
