@@ -12,6 +12,7 @@ import java.awt.Toolkit;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.UnsupportedFlavorException;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
@@ -104,7 +105,7 @@ public class GUI {
               "Would You Like to Save your Code First?", "Warning", 0);
           if (dialogResult == JOptionPane.YES_OPTION) {
             if (EditorForm.fileName != null && !EditorForm.fileName.equals("")) {
-              file.writeStringArrayToFile(EditorForm.fileName, focusForm()
+              file.writeStringArrayToFile(EditorForm.fileName, codeForm
                   .toString().split("\n"));
             } else {
               JFileChooser chooser = new JFileChooser();
@@ -117,7 +118,7 @@ public class GUI {
                 } catch (IOException ex) {
                 }
                 if (!"".equals(fileName)) {
-                  file.writeStringArrayToFile(fileName, focusForm().toString()
+                  file.writeStringArrayToFile(fileName, codeForm.toString()
                       .split("\n"));
                 }
               }
@@ -153,10 +154,10 @@ public class GUI {
         public void keyPressed(KeyEvent e) {
           switch (e.getExtendedKeyCode()) {
           case 116: // f5
-            file.writeStringArrayToFile(Silos.IDEFileName, focusForm()
+            file.writeStringArrayToFile(Silos.IDEFileName, codeForm
                 .toString().split("\n"));
             if (EditorForm.fileName != null) {
-              file.writeStringArrayToFile(EditorForm.fileName, focusForm()
+              file.writeStringArrayToFile(EditorForm.fileName, codeForm
                   .toString().split("\n"));
             }
             try {
@@ -171,7 +172,7 @@ public class GUI {
             break;
           case 117: // f6
             if (EditorForm.fileName != null) {
-              file.writeStringArrayToFile(EditorForm.fileName, focusForm()
+              file.writeStringArrayToFile(EditorForm.fileName, codeForm
                   .toString().split("\n"));
             }
             break;
@@ -294,7 +295,6 @@ public class GUI {
     }
 
     private void prettyPrint(int l, String line, int i, Graphics g) {
-
       int maxYHeight = getPreferredSize().height;
       int y = i * CHARHEIGHT + CHARHEIGHT;
       if (l > maxYHeight) {
@@ -303,6 +303,7 @@ public class GUI {
       }
 
       if (y > 0) {
+							if(form.equals(codeForm)){
         int lineMatch = -1;
         for (int in = 0; in < lineRegexes.size(); in++) {
           if (line.matches(lineRegexes.get(in))) {
@@ -334,7 +335,10 @@ public class GUI {
           }
         }
 
-      }
+      }else{
+								g.drawString(line,0,y);
+							}
+						}
     }
 
     private void printCursor(Graphics g, int l) {
@@ -414,8 +418,17 @@ public class GUI {
     menu.add(menuItem);
     menuItem = new JMenuItem("Save As...");
     menu.add(menuItem);
-    menuItem = new JMenuItem("Exit");
-    menu.add(menuItem);
+    menuItem = new JMenuItem("Exit AND LOSE ALL UNSAVED CHANGES");
+
+				menuItem.addActionListener(new ActionListener(){
+
+					@Override
+					public void actionPerformed(ActionEvent e) {
+System.exit(0);
+					}
+					
+				});
+				menu.add(menuItem);
 
     return menuBar;
   }
