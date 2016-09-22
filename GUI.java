@@ -368,7 +368,7 @@ public class GUI {
 		JOptionPane.QUESTION_MESSAGE, null, LANGUAGES, "SILOS");
 
 	public static void runGUI() {
-		String[] highlights = file.getWordsFromFile(LANGUAGE + "!COLOR.txt");
+		String[] highlights = file.getWordsFromFile(LANGUAGE + ".COLOR.txt");
 		boolean onLines = true;
 		int counter = -1;
 		if (highlights != null) {
