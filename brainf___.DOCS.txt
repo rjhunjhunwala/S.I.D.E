@@ -1,0 +1,2 @@
+(.*)
+Brainf___ is an esolang with 8 commandsNEWLINE, reads a byte of inputNEWLINE.Outputs the current spotNEWLINE>moves the pointer rightNEWLINE< moves it leftNEWLINE- decrements the current pointerNEWLINE[ is equivalent to while(pointer>0)NEWLINE] ends a while loop.NEWLINEAll other characters are generally ignored.NEWLINEIt represents an original "turing tarpit"NEWLINEwhich is a minimalist language which can still perform universal computation.

@@ -25,6 +25,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Scanner;
 import java.util.logging.Level;
@@ -57,7 +58,7 @@ public class GUI {
 
 	static final String[] LANGUAGES = new String[]{"SILOS", "brainf___"};
 	static Form codeForm = new EditorForm();
-	static Form helpForm = new EditorForm(-1); // cheating
+	static Form helpForm = new HelpForm();
 	static Form consoleForm = new ConsoleForm();
 	static Form focusForm = codeForm;
 
@@ -76,11 +77,11 @@ public class GUI {
 		Panel helpPanel = new Panel(this, helpForm);
 		JScrollPane helpScrollPane = new JScrollPane(helpPanel);
 		JSplitPane lsplit = new JSplitPane(JSplitPane.VERTICAL_SPLIT,
-			codeScrollPane, helpScrollPane);
+										codeScrollPane, helpScrollPane);
 		Panel consolePanel = new Panel(this, consoleForm);
 		JScrollPane consoleScrollPane = new JScrollPane(consolePanel);
 		JSplitPane hsplit = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, lsplit,
-			consoleScrollPane);
+										consoleScrollPane);
 
 		public Frame() {
 			super("IDE (f5=save+compile+run / f6=save)");
@@ -102,11 +103,11 @@ public class GUI {
 						ConsoleForm.lastProcess.destroy();
 					}
 					int dialogResult = JOptionPane.showConfirmDialog(null,
-						"Would You Like to Save your Code first?", "Warning", 0);
+													"Would You Like to Save your Code first?", "Warning", 0);
 					if (dialogResult == JOptionPane.YES_OPTION) {
 						if (EditorForm.fileName != null && !EditorForm.fileName.equals("")) {
 							file.writeStringArrayToFile(EditorForm.fileName, codeForm
-								.toString().split("\n"));
+															.toString().split("\n"));
 						} else {
 							saveFileAs();
 						}
@@ -124,8 +125,8 @@ public class GUI {
 					if ((int) pushed == 22) {
 						try {
 							focusForm().applyHumanInput(
-								(String) Toolkit.getDefaultToolkit().getSystemClipboard()
-								.getData(DataFlavor.stringFlavor));
+															(String) Toolkit.getDefaultToolkit().getSystemClipboard()
+															.getData(DataFlavor.stringFlavor));
 						} catch (UnsupportedFlavorException ex) {
 							Logger.getLogger(GUI.class.getName()).log(Level.SEVERE, null, ex);
 						} catch (IOException ex) {
@@ -142,16 +143,16 @@ public class GUI {
 					switch (e.getExtendedKeyCode()) {
 						case 116: // f5
 							file.writeStringArrayToFile(Silos.IDEFileName, codeForm
-								.toString().split("\n"));
+															.toString().split("\n"));
 							if (EditorForm.fileName != null) {
 								file.writeStringArrayToFile(EditorForm.fileName, codeForm
-									.toString().split("\n"));
+																.toString().split("\n"));
 							}
 							try {
 
 								consoleForm.clear();
 								Process runtime = Runtime.getRuntime().exec(
-									"java -jar " + LANGUAGE + ".jar " + Silos.IDEFileName);
+																"java -jar " + LANGUAGE + ".jar " + Silos.IDEFileName);
 								consoleForm.addProc(runtime, f);
 							} catch (Exception ex) {
 								Logger.getLogger(GUI.class.getName()).log(Level.SEVERE, null, ex);
@@ -160,7 +161,7 @@ public class GUI {
 						case 117: // f6
 							if (EditorForm.fileName != null) {
 								file.writeStringArrayToFile(EditorForm.fileName, codeForm
-									.toString().split("\n"));
+																.toString().split("\n"));
 							}
 							break;
 						case 17: // ctrl button press; control *characters* handled separately
@@ -214,7 +215,7 @@ public class GUI {
 			}
 			if (!"".equals(fileName)) {
 				file.writeStringArrayToFile(fileName, codeForm.toString()
-					.split("\n"));
+												.split("\n"));
 				EditorForm.fileName = fileName;
 			}
 		}
@@ -254,7 +255,7 @@ public class GUI {
 		@Override
 		public Dimension getPreferredSize() {
 			int max = this.getFontMetrics(form.font).stringWidth(
-				new String(new char[80]).replace('\0', ' '));
+											new String(new char[80]).replace('\0', ' '));
 			String[] lines = form.formatLines();
 			for (int i = 0; i < lines.length; i++) {
 				int cur = this.getFontMetrics(form.font).stringWidth(lines[i]);
@@ -285,8 +286,7 @@ public class GUI {
 
 		/**
 		 * The following static block is used courtesy of stack overflow creative
-		 * commons liscence
-		 * http://stackoverflow.com/questions/3680221/how-can-i-get-
+		 * commons liscence http://stackoverflow.com/questions/3680221/how-can-i-get-
 		 * the-monitor-size-in-java
 		 */
 		static {
@@ -358,16 +358,31 @@ public class GUI {
 			g.drawLine(col * CHARWIDTH, y + 3, col * CHARWIDTH, y + 18);
 			g.drawLine(col * CHARWIDTH - 2, y + 3, col * CHARWIDTH + 2, y + 3);
 			g.drawLine(col * CHARWIDTH - 2, y + 18, col * CHARWIDTH + 2, y + 18);
+
 		}
 	}
 
 	public static final int CHARWIDTH = 9;
 	public static final int CHARHEIGHT = 15;
-	public static final String LANGUAGE = (String) JOptionPane.showInputDialog(
-		null, "Choose a language to develop in.", "Which language?",
-		JOptionPane.QUESTION_MESSAGE, null, LANGUAGES, "SILOS");
+	public static String LANGUAGE = LANGUAGES[0];
+//(String) JOptionPane.showInputDialog(
+//		null, "Choose a language to develop in.", "Which language?",
+//		JOptionPane.QUESTION_MESSAGE, null, LANGUAGES, "SILOS");
 
 	public static void runGUI() {
+		initializeStaticAnalysis();
+		mainFrame = new Frame();
+	}
+	public static ArrayList<String> lineRegexHelp = new ArrayList<>();
+	public static ArrayList<String> help = new ArrayList<>();
+
+	public static void initializeStaticAnalysis() {
+		lineRegexes = new ArrayList<>();
+		lineColors = new ArrayList<>();
+		wordRegexes = new ArrayList<>();
+		wordColors = new ArrayList<>();
+		help = new ArrayList<>();
+		lineRegexHelp = new ArrayList<>();
 		String[] highlights = file.getWordsFromFile(LANGUAGE + ".COLOR.txt");
 		boolean onLines = true;
 		int counter = -1;
@@ -403,7 +418,14 @@ public class GUI {
 			}
 
 		}
-		mainFrame = new Frame();
+		String[] docs = file.getWordsFromFile(LANGUAGE + ".DOCS.txt");
+
+		if (docs != null) {
+			for (int i = 0; i < docs.length-1; i++) {
+				lineRegexHelp.add(docs[i]);
+				help.add(docs[i + 1].replaceAll("NEWLINE", "\n"));
+			}
+		}
 	}
 	public static Frame mainFrame;
 
@@ -415,15 +437,19 @@ public class GUI {
 		JMenuItem menuItem;
 
 		menuItem = new JMenuItem("New");
-	menuItem.addActionListener(new ActionListener() {
+		menuItem.addActionListener(new ActionListener() {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
+				codeForm.humanCursor.col = 0;
+				codeForm.humanCursor.line = 0;
 				codeForm.lines = new ArrayList<>();
 				codeForm.lines.add(new ArrayList<Character>());
+				EditorForm.fileName = null;
 				saveFileAs();
 			}
-			});
+		});
+
 		menu.add(menuItem);
 		menuItem = new JMenuItem("Open");
 
@@ -431,28 +457,30 @@ public class GUI {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-    String program = "";
+				String program = "";
+				codeForm.humanCursor.col = 0;
+				codeForm.humanCursor.line = 0;
+				JFileChooser chooser = new JFileChooser();
+				int returnVal = chooser.showOpenDialog(null);
+				if (returnVal == JFileChooser.APPROVE_OPTION) {
+					File f = chooser.getSelectedFile();
+					try {
+						EditorForm.fileName = f.getCanonicalPath();
+					} catch (IOException ex) {
+						Logger.getLogger(EditorForm.class.getName())
+														.log(Level.SEVERE, null, ex);
+					}
+					String[] lineArray = file.getWordsFromFile(f);
+					for (int i = 0; i < lineArray.length; i++) {
+						program += i == 0 ? lineArray[i] : "\n" + lineArray[i];
+					}
+					codeForm.lines = Form.getLinesFromString(program);
+					codeForm.lines.add(new ArrayList<Character>());
+				} else {
+					codeForm.lines = new ArrayList<List<Character>>();
+					codeForm.lines.add(new ArrayList<Character>());
+				}
 
-    JFileChooser chooser = new JFileChooser();
-    int returnVal = chooser.showOpenDialog(null);
-    if (returnVal == JFileChooser.APPROVE_OPTION) {
-      File f = chooser.getSelectedFile();
-      try {
-        EditorForm.fileName = f.getCanonicalPath();
-      } catch (IOException ex) {
-        Logger.getLogger(EditorForm.class.getName())
-            .log(Level.SEVERE, null, ex);
-      }
-      String[] lineArray = file.getWordsFromFile(f);
-      for (int i = 0; i < lineArray.length; i++) {
-        program += i == 0 ? lineArray[i] : "\n" + lineArray[i];
-      }
-      codeForm.lines = Form.getLinesFromString(program);
-      codeForm.lines.add(new ArrayList<Character>());
-    } else {
-      codeForm.lines = new ArrayList<List<Character>>();
-      codeForm.lines.add(new ArrayList<Character>());
-    }
 			}
 		}
 		);
@@ -465,11 +493,12 @@ public class GUI {
 			public void actionPerformed(ActionEvent e) {
 				if (EditorForm.fileName != null && !EditorForm.fileName.equals("")) {
 					file.writeStringArrayToFile(EditorForm.fileName, codeForm
-						.toString().split("\n"));
+													.toString().split("\n"));
 				} else {
 					saveFileAs();
 				}
 			}
+
 		}
 		);
 
@@ -477,32 +506,54 @@ public class GUI {
 		menuItem = new JMenuItem("Save As...");
 
 		menuItem.addActionListener(
-			new ActionListener() {
+										new ActionListener() {
 
-			@Override
-			public void actionPerformed(ActionEvent e
-			) {
-				saveFileAs();
-			}
+											@Override
+											public void actionPerformed(ActionEvent e
+											) {
+												saveFileAs();
+											}
 
-		}
+										}
 		);
 		menu.add(menuItem);
 		menuItem = new JMenuItem("Exit");
 
 		menuItem.addActionListener(
-			new ActionListener() {
+										new ActionListener() {
 
-			@Override
-			public void actionPerformed(ActionEvent e
-			) {
-				mainFrame.dispatchEvent(new WindowEvent(mainFrame, WindowEvent.WINDOW_CLOSING));
-			}
+											@Override
+											public void actionPerformed(ActionEvent e
+											) {
+												mainFrame.dispatchEvent(new WindowEvent(mainFrame, WindowEvent.WINDOW_CLOSING));
+											}
 
-		}
+										}
 		);
 		menu.add(menuItem);
 
+		menu = new JMenu("Language");
+		menuBar.add(menu);
+		class LanguageButtonListener implements ActionListener {
+
+			final String NAME;
+
+			LanguageButtonListener(String name) {
+				NAME = name;
+			}
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				LANGUAGE = NAME;
+				initializeStaticAnalysis();
+			}
+
+		}
+		for (String s : LANGUAGES) {
+			menuItem = new JMenuItem(s);
+			menuItem.addActionListener(new LanguageButtonListener(s));
+			menu.add(menuItem);
+		}
 		return menuBar;
 	}
 
