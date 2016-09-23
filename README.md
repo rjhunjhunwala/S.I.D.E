@@ -39,3 +39,4 @@ Help text to display if the current line matches the regex
 Regex
 Help text to display if the current line matches the regex
 </pre>
+Lastly, you must add LANGUAGENAME into the String[] called languages in the GUI class
