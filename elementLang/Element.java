@@ -8,10 +8,12 @@ import simpleLanguage.SimpleCmd;
 import simpleLanguage.SimpleInt;
 import simpleLanguage.SimpleLanguage;
 import simpleLanguage.SimpleMap;
+import simpleLanguage.SimpleReal;
 import simpleLanguage.SimpleScalar;
 import simpleLanguage.SimpleStack;
 import simpleLanguage.SimpleStkCmd;
 import simpleLanguage.SimpleStr;
+import simpleLanguage.SmplStkCmdFxdArity;
 import simpleLanguage.Status;
 
 /**
@@ -21,11 +23,11 @@ public class Element extends SimpleLanguage {
 
   public static void main(String[] args) {
     Element e = new Element();
-    ArrayList<Command> cmds = e.splitCommands("3'_\":`````");
-    System.out.println(cmds);
+    ArrayList<Command> cmds = e.splitCommands("_ 1 2+:`````");
+    // System.out.println(cmds);
     e.applyCmds(cmds);
-    System.out.println(e.mainStack.knownData);
-    System.out.println(e.ctrlStack.knownData);
+    // System.out.println(e.mainStack.knownData);
+    // System.out.println(e.ctrlStack.knownData);
 
     for (Command c : cmds) {
       System.out.print(c.token);
@@ -48,8 +50,7 @@ public class Element extends SimpleLanguage {
 
   SimpleStack mainStack = new SimpleStack(SimpleScalar.class, "main");
   SimpleStack ctrlStack = new SimpleStack(SimpleScalar.class, "ctrl");
-  SimpleMap<SimpleScalar, SimpleScalar> varsMap = new SimpleMap<SimpleScalar, SimpleScalar>(
-      "vars");
+  SimpleMap varsMap = new SimpleMap("vars");
 
   Element() {
     addDS(mainStack);
@@ -58,9 +59,23 @@ public class Element extends SimpleLanguage {
   }
 
   @Override
+  protected String getLangInfo() {
+    return "Element is a simple stack-based language.";
+  }
+
+  @Override
   protected boolean isValidSyntax(String source) {
     // TODO Auto-generated method stub
     return false;
+  }
+
+  protected Element clone() {
+    Element res = new Element();
+    res.clear();
+    res.addDS(mainStack.clone());
+    res.addDS(ctrlStack.clone());
+    res.addDS(varsMap.clone());
+    return res;
   }
 
   @Override
@@ -76,35 +91,40 @@ public class Element extends SimpleLanguage {
         isEsc = false;
       } else {
         if (curLit.length() > 0) {
-          res.add(new LiteralCmd(source.substring(lastCmd + 1, i + 1), curLit));
-          lastCmd = i;
+          res.add(new LiteralCmd(source.substring(lastCmd + 1, i), curLit));
+          lastCmd = i - 1;
           curLit = "";
         }
+        String token = source.substring(lastCmd + 1, i + 1);
         switch (source.charAt(i)) {
         case ' ':
           break;
         case '_':
-          res.add(new InputCmd(source.substring(lastCmd + 1, i + 1)));
+          res.add(new InputCmd(token));
           lastCmd = i;
           break;
         case '`':
-          res.add(new OutputCmd(source.substring(lastCmd + 1, i + 1)));
+          res.add(new OutputCmd(token));
           lastCmd = i;
           break;
         case '"':
-          res.add(new CMCmd(source.substring(lastCmd + 1, i + 1)));
+          res.add(new CMCmd(token));
           lastCmd = i;
           break;
         case '\'':
-          res.add(new MCCmd(source.substring(lastCmd + 1, i + 1)));
+          res.add(new MCCmd(token));
           lastCmd = i;
           break;
         case '+':
-          res.add(new AddCmd(source.substring(lastCmd + 1, i + 1)));
+          res.add(new AddCmd(token));
+          lastCmd = i;
+          break;
+        case '-':
+          res.add(new SubCmd(token));
           lastCmd = i;
           break;
         case ':':
-          res.add(new DupeCmd(source.substring(lastCmd + 1, i + 1)));
+          res.add(new DupeCmd(token));
           lastCmd = i;
           break;
         case '\\':
@@ -152,22 +172,52 @@ public class Element extends SimpleLanguage {
 
   }
 
-  private static class AddCmd extends SimpleStkCmd {
+  private static abstract class ArithCmd extends SmplStkCmdFxdArity {
 
+    public ArithCmd(String cmdName, String token, String stackName) {
+      super(2, cmdName, token, stackName);
+    }
+
+    @Override
+    protected DataStructure[] getRes(DataStructure[] input) {
+      SimpleScalar top = (SimpleScalar) input[0];
+      SimpleScalar bottom = (SimpleScalar) input[1];
+      if (top.realValue() == null || bottom.realValue() == null) {
+        return getDefaultOut();
+      }
+      return new SimpleScalar[] { new SimpleReal(getArith(bottom.realValue(),
+          top.realValue())) };
+    }
+
+    @Override
+    protected SimpleScalar[] getDefaultOut() {
+      return new SimpleScalar[] { new SimpleScalar() };
+    }
+
+    abstract double getArith(double top, double bottom);
+
+  }
+
+  private static class AddCmd extends ArithCmd {
     public AddCmd(String token) {
       super("add", token, "main");
     }
 
     @Override
-    protected void calc(SimpleStack stack) {
-      errLv = stack.canPop(2);
-      stack.subLen(2);
-      stack.addLen(1);
-      if (stack.knownData.size() > 0) {
-        stack.knownData.remove(0);
-      }
+    double getArith(double top, double bottom) {
+      return bottom + top;
+    }
+  }
+  
+  private static class SubCmd extends ArithCmd {
+    public SubCmd(String token) {
+      super("sub", token, "main");
     }
 
+    @Override
+    double getArith(double top, double bottom) {
+      return bottom - top;
+    }
   }
 
   private static class LiteralCmd extends SimpleStkCmd {
@@ -274,3 +324,7 @@ public class Element extends SimpleLanguage {
   }
 
 }
+
+// variable const : compiler will only allow variable as lvalue once
+// reference parameter const : prevents parameter from being used as lvalue
+// after signature : request to compiler to forbid any member variable as lvalue
