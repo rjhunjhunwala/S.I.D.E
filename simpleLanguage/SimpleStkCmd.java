@@ -1,7 +1,5 @@
 package simpleLanguage;
 
-import java.util.Map;
-
 /**
  * @author PhiNotPi
  */
@@ -14,8 +12,8 @@ public abstract class SimpleStkCmd extends Command {
     this.stackName = stackName;
   }
 
-  public void apply(Map<String, DataStructure> DSbyname) {
-    DataStructure ds = DSbyname.get(stackName);
+  public void apply(SimpleLanguage sl) {
+    DataStructure ds = sl.DSbyname.get(stackName);
     if (!(ds instanceof SimpleStack)) {
       System.err.println("Error: cmd:" + cmdName + " stk:" + stackName);
       return;

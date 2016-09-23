@@ -1,7 +1,5 @@
 package simpleLanguage;
 
-import java.util.Map;
-
 /**
  * @author PhiNotPi
  */
@@ -20,6 +18,6 @@ public abstract class Command {
     return errLv;
   }
 
-  public abstract void apply(Map<String, DataStructure> DSbyname);
+  public abstract void apply(SimpleLanguage sl);
 
 }

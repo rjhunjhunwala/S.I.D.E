@@ -12,4 +12,6 @@ public abstract class DataStructure {
   DataStructure(String label) {
     this.label = label;
   }
+  
+  public abstract DataStructure clone();
 }

@@ -14,6 +14,11 @@ public abstract class SimpleLanguage extends Language {
   public final Map<String, DataStructure> DSbyname = new HashMap<String, DataStructure>();
   final ArrayList<DataStructure> DS = new ArrayList<DataStructure>();
 
+  protected void clear() {
+    DSbyname.clear();
+    DS.clear();
+  }
+
   // Map<String, String> supType = new HashMap<String, String>();
 
   protected void addDS(DataStructure ds) {
@@ -38,7 +43,7 @@ public abstract class SimpleLanguage extends Language {
 
   protected void applyCmds(ArrayList<Command> cmds) {
     for (Command c : cmds) {
-      c.apply(DSbyname);
+      c.apply(this);
     }
   }
 

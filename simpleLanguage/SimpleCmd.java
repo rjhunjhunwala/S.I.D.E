@@ -1,7 +1,5 @@
 package simpleLanguage;
 
-import java.util.Map;
-
 /**
  * @author PhiNotPi
  */
@@ -14,10 +12,10 @@ public abstract class SimpleCmd extends Command {
     this.DSnames = DSnames;
   }
 
-  public void apply(Map<String, DataStructure> DSbyname) {
+  public void apply(SimpleLanguage sl) {
     DataStructure[] DSes = new DataStructure[DSnames.length];
     for (int i = 0; i < DSes.length; i++) {
-      DataStructure ds = DSbyname.get(DSnames[i]);
+      DataStructure ds = sl.DSbyname.get(DSnames[i]);
       if (!(ds instanceof DataStructure)) {
         System.err.println("Error: cmd:" + cmdName + " ds:" + DSnames[i]);
       }

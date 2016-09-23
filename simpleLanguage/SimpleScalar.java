@@ -71,4 +71,16 @@ public class SimpleScalar extends DataStructure {
     return null;
   }
 
+  public SimpleScalar clone() {
+    SimpleScalar res = new SimpleScalar();
+    if (strValue != null) {
+      res.setStrValue(strValue);
+    } else if (intValue != null) {
+      res.setIntValue(intValue);
+    } else if (realValue != null) {
+      res.setRealValue(realValue);
+    }
+    return res;
+  }
+
 }

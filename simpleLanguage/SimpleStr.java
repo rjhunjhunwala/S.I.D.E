@@ -6,5 +6,9 @@ public class SimpleStr extends SimpleScalar {
     super();
     setStrValue(s);
   }
+  
+  public SimpleStr clone(){
+    return new SimpleStr(strValue());
+  }
 
 }

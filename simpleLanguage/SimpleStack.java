@@ -21,6 +21,16 @@ public class SimpleStack extends DataStructure {
     super(label);
     this.type = type;
   }
+  
+  public SimpleStack clone(){
+    SimpleStack res = new SimpleStack(type, label);
+    res.minSizeEstimate = this.minSizeEstimate;
+    res.maxSizeEstimate = this.maxSizeEstimate;
+    for(int i = 0; i < knownData.size(); i++){
+      res.knownData.add(this.knownData.get(i).clone());
+    }
+    return res;
+  }
 
   public void subLen(Integer diff) {
     if (diff == null) {
@@ -77,7 +87,7 @@ public class SimpleStack extends DataStructure {
     } else if (maxSizeEstimate == null) {
       return Status.WARN;
     } else if (count <= maxSizeEstimate) {
-      return Status.OK;
+      return Status.WARN;
     } else {
       return Status.ERROR;
     }

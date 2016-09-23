@@ -6,8 +6,8 @@ import java.util.Map;
 /**
  * @author PhiNotPi
  */
-public class SimpleMap<K, V> extends DataStructure {
-  Map<K, V> knownData = new HashMap<K, V>();
+public class SimpleMap extends DataStructure {
+  Map<DataStructure, DataStructure> knownData = new HashMap<DataStructure, DataStructure>();
 
   SimpleMap() {
     super();
@@ -15,6 +15,15 @@ public class SimpleMap<K, V> extends DataStructure {
 
   public SimpleMap(String label) {
     super(label);
+  }
+  
+  public SimpleMap clone(){
+    SimpleMap res = new SimpleMap(label);
+    for(DataStructure k : knownData.keySet()){
+      DataStructure v = knownData.get(k);
+      res.knownData.put(k.clone(), v.clone());
+    }
+    return res;
   }
 
 }
