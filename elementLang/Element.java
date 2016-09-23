@@ -274,7 +274,3 @@ public class Element extends SimpleLanguage {
   }
 
 }
-
-// variable const : compiler will only allow variable as lvalue once
-// reference parameter const : prevents parameter from being used as lvalue
-// after signature : request to compiler to forbid any member variable as lvalue
