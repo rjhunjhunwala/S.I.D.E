@@ -1,5 +1,3 @@
-package IDE;
-
 /*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
@@ -253,7 +251,7 @@ public class GUI {
 		Frame getFrame() {
 			return frame;
 		}
-
+public static final boolean USESCROLLBAR = false;
 		@Override
 		public Dimension getPreferredSize() {
 			int max = this.getFontMetrics(form.font).stringWidth(
@@ -265,7 +263,7 @@ public class GUI {
 					max = cur;
 				}
 			}
-			return new Dimension(max + 3, screenHeight);
+			return new Dimension(max + 3, USESCROLLBAR?lines.length*15:screenHeight);
 		}
 
 		@Override
@@ -302,7 +300,7 @@ public class GUI {
 		}
 
 		private void prettyPrint(int l, String line, int i, Graphics g) {
-			int maxYHeight = getPreferredSize().height;
+			int maxYHeight = this.getHeight();
 			int y = i * CHARHEIGHT + CHARHEIGHT;
 			if (l > maxYHeight) {
 				y -= l;
