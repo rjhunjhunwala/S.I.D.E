@@ -1,0 +1,103 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>S.i.d.e by rjhunjhunwala</title>
+    <link rel="stylesheet" href="stylesheets/styles.css">
+    <link rel="stylesheet" href="stylesheets/github-dark.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+    <script src="javascripts/respond.js"></script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <!--[if lt IE 8]>
+    <link rel="stylesheet" href="stylesheets/ie.css">
+    <![endif]-->
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+
+  </head>
+  <body>
+      <div id="header">
+        <nav>
+          <li class="fork"><a href="https://github.com/rjhunjhunwala/S.I.D.E">View On GitHub</a></li>
+          <li class="downloads"><a href="https://github.com/rjhunjhunwala/S.I.D.E/zipball/master">ZIP</a></li>
+          <li class="downloads"><a href="https://github.com/rjhunjhunwala/S.I.D.E/tarball/master">TAR</a></li>
+          <li class="title">DOWNLOADS</li>
+        </nav>
+      </div><!-- end header -->
+
+    <div class="wrapper">
+
+      <section>
+        <div id="title">
+          <h1>S.i.d.e</h1>
+          <p>The Simple IDE for a Modern Age</p>
+          <hr>
+          <span class="credits left">Project maintained by <a href="https://github.com/rjhunjhunwala">rjhunjhunwala</a></span>
+          <span class="credits right">Hosted on GitHub Pages &mdash; Theme by <a href="https://twitter.com/michigangraham">mattgraham</a></span>
+        </div>
+
+        <h1>
+<a id="side" class="anchor" href="#side" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>S.I.D.E</h1>
+
+<p>The Simple IDE for a Modern Age</p>
+
+<h1>
+<a id="features" class="anchor" href="#features" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Features</h1>
+
+<ul>
+<li>
+Integrated support for [SIL](https://github.com/rjhunjhunwala/S.I.L.O.S)
+</li>
+<li>Extensible support for arbitrary languages (currently only brainf*** is supported (as well as SIL))</li>
+<li>Customisable Syntax highlighting</li>
+<li>A default dark theme (because it looks better)</li>
+</ul>
+
+<h1>
+<a id="this-repo-is-a-collaboration-with-beta---decay-" class="anchor" href="#this-repo-is-a-collaboration-with-beta---decay-" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>This repo is a collaboration with Beta - Decay </h1>
+
+<p><a href="https://github.com/beta-decay/Esolang-IDE">https://github.com/beta-decay/Esolang-IDE</a></p>
+
+<h1>
+<a id="how-to-add-a-new-language" class="anchor" href="#how-to-add-a-new-language" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>How to add a new language</h1>
+
+<p>You must Provide the following</p>
+
+<ul>
+<li>A jar named LANGUAGENAME.jar which accepts a file name as a CLA and runs the given file as a program in LANGUAGENAME
+You may optionally provide the following</li>
+<li>A file named LANGUAGENAME.COLORS.txt which is formatted like so
+<pre>
+Regex 
+r g b values of a Color if line matches regex
+Regex 
+Color if line matches regex 
+Regex 
+Color if line matches regex 
+END_LINES 
+Regex 
+Color if word matches regex 
+Regex 
+Color if word matches regex 
+</pre>
+</li>
+<li>A file named LANGUAGENAME.DOCS.txt which is formatted like so
+<pre>
+Regex
+Help text to display if the current line matches the regex "NEWLINE" is used as an escape sequence to represent a new line being displayed.
+Regex
+Help text to display if the current line matches the regex
+Regex
+Help text to display if the current line matches the regex
+</pre>
+Lastly, you must add LANGUAGENAME into the String[] called languages in the GUI class</li>
+</ul>
+      </section>
+
+    </div>
+    <!--[if !IE]><script>fixScale(document);</script><![endif]-->
+    
+  </body>
+</html>
