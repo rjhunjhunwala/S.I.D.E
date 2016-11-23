@@ -40,3 +40,4 @@ Regex
 Help text to display if the current line matches the regex
 </pre>
 Lastly, you must add LANGUAGENAME into the String[] called languages in the GUI class
+![alt tag](https://raw.githubusercontent.com/rjhunjhunwala/S.I.D.E/master/screenshot.png)
