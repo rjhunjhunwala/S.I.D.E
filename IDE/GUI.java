@@ -1,4 +1,3 @@
-package IDE;
 /*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
@@ -154,6 +153,7 @@ public class GUI {
 								consoleForm.clear();
 								Process runtime = Runtime.getRuntime().exec(
 																"java -jar " + LANGUAGE + ".jar " + Silos.IDEFileName);
+
 								consoleForm.addProc(runtime, f);
 							} catch (Exception ex) {
 								Logger.getLogger(GUI.class.getName()).log(Level.SEVERE, null, ex);
@@ -180,7 +180,7 @@ public class GUI {
 							focusForm().humanCursorDown();
 							break;
 						default:
-						// focusForm().applyFormInput(":"+e.getExtendedKeyCode());
+
 					}
 
 					f.repaint();

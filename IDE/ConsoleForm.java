@@ -1,5 +1,3 @@
-package IDE;
-
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
@@ -41,7 +39,8 @@ static Process lastProcess = null;
   @Override
   void addProc(final Process proc, final JFrame f) {
    lastProcess = proc; 
-    new Thread("STDOUT") {
+  //STDIN = new OutputStream();
+			new Thread("STDOUT") {
       public void run() {
         try {
           int next = 0;
@@ -83,7 +82,8 @@ static Process lastProcess = null;
         f.repaint();
       }
     }.start();
-  }
+  STDIN = (proc.getOutputStream());
+		}
 
   @Override
   boolean canBackspace(Cursor cur) {
@@ -102,8 +102,10 @@ static Process lastProcess = null;
 
   @Override
   void applyHumanInput(char pushed) {
+
     if (STDIN != null) {
-      applyFormInput(humanCursor, pushed, new Cursor[] {});
+     			System.out.println(pushed);
+					applyFormInput(humanCursor, pushed, new Cursor[] {});
       if ((int) pushed == inputSep) {
         ArrayList<Byte> input = inputAccumulator();
         byte[] in = new byte[input.size()];
