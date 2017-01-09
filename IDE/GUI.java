@@ -24,6 +24,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -555,6 +556,21 @@ public static final boolean USESCROLLBAR = false;
 			menuItem.addActionListener(new LanguageButtonListener(s));
 			menu.add(menuItem);
 		}
+		menu = new JMenu("Advanced");
+	menuItem = new JMenuItem("Additional languages");
+	menuItem.addActionListener(new ActionListener(){
+	@Override
+	public void actionPerformed(ActionEvent e){
+		try {
+			java.awt.Desktop.getDesktop().browse(URI.create("https://tio.run/nexus/"+JOptionPane.showInputDialog(mainFrame, "Pick a language from TIO\n(Try it online!)", "Choose additional language",JOptionPane.INFORMATION_MESSAGE)));
+		} catch (IOException ex) {
+			Logger.getLogger(GUI.class.getName()).log(Level.SEVERE, null, ex);
+		}
+	}
+	});
+	menu.add(menuItem);
+		menuBar.add(menu);
+	
 		return menuBar;
 	}
 

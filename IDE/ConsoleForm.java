@@ -104,7 +104,6 @@ static Process lastProcess = null;
   void applyHumanInput(char pushed) {
 
     if (STDIN != null) {
-     			System.out.println(pushed);
 					applyFormInput(humanCursor, pushed, new Cursor[] {});
       if ((int) pushed == inputSep) {
         ArrayList<Byte> input = inputAccumulator();
