@@ -39,7 +39,16 @@ Help text to display if the current line matches the regex
 Regex
 Help text to display if the current line matches the regex
 </pre>
-Lastly, you must add LANGUAGENAME into the String[] called languages in the GUI class
+Lastly, you must add your languages name and command on seperate lines into the languages.txt file
+<pre>
+lang1
+command1
+lang2
+command2
+lang3
+command3
+etc...
+</pre>
 <hr/>
 Screenshot
 ![alt tag](https://raw.githubusercontent.com/rjhunjhunwala/S.I.D.E/master/Screenshot.png)
