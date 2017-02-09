@@ -1,0 +1,9 @@
+x = 10
+lbla
+stack 0 x
+x - 1
+if x a
+lblb
+stackPop 0
+printInt m
+if m b
