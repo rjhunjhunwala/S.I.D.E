@@ -2,7 +2,7 @@ title: S.i.d.e
 description: The Simple IDE for a Modern Age
 google_analytics: 
 show_downloads: true
-theme: jekyll-theme-architect
+theme: jekyll-theme-midnight
 
 gems:
   - jekyll-mentions
