@@ -14,8 +14,8 @@ https://github.com/beta-decay/Esolang-IDE
 
 <h1>How to add a new language</h1>
 You must Provide the following
-- A jar named LANGUAGENAME.jar which accepts a file name as a CLA and runs the given file as a program in LANGUAGENAME
-You may optionally provide the following
+- A command i.e "lang -args foo.lang" (note no trailing space) which will then be passed a file name as a CLA and runs the given file as a program in LANGUAGENAME
+## You may optionally provide the following
 - A file named LANGUAGENAME.COLORS.txt which is formatted like so
 <pre>
 Regex 
@@ -39,4 +39,16 @@ Help text to display if the current line matches the regex
 Regex
 Help text to display if the current line matches the regex
 </pre>
-Lastly, you must add LANGUAGENAME into the String[] called languages in the GUI class
+Lastly, you must add your languages name and command on seperate lines into the languages.txt file
+<pre>
+lang1
+command1
+lang2
+command2
+lang3
+command3
+etc...
+</pre>
+<hr/>
+Screenshot
+![alt tag](https://raw.githubusercontent.com/rjhunjhunwala/S.I.D.E/master/Screenshot.png)
