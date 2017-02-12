@@ -111,8 +111,8 @@ public class GUI {
 													"Would You Like to Save your Code first?", "Warning", 0);
 					if (dialogResult == JOptionPane.YES_OPTION) {
 						if (EditorForm.fileName != null && !EditorForm.fileName.equals("")) {
-							file.writeStringArrayToFile(EditorForm.fileName, codeForm
-															.toString().split("\n"));
+							file.writeToFile(EditorForm.fileName, codeForm
+															.toString());
 						} else {
 							saveFileAs();
 						}
@@ -147,17 +147,22 @@ public class GUI {
 				public void keyPressed(KeyEvent e) {
 					switch (e.getExtendedKeyCode()) {
 						case 116: // f5
-							file.writeStringArrayToFile(Silos.IDEFileName, codeForm
-															.toString().split("\n"));
+//							System.out.println("---code---");
+//													System.out.print(codeForm.toString());
+//													System.out.println("\n---code---");
+							file.writeToFile(Silos.IDEFileName, codeForm
+															.toString());
 							if (EditorForm.fileName != null) {
-								file.writeStringArrayToFile(EditorForm.fileName, codeForm
-																.toString().split("\n"));
+
+								file.writeToFile(EditorForm.fileName, codeForm
+																.toString());
 							}
 							try {
 
 								consoleForm.clear();
+								System.out.println(LANGUAGES[command] +" " + Silos.IDEFileName);
 								Process runtime = Runtime.getRuntime().exec(
-																LANGUAGES[command] +" " + Silos.IDEFileName);
+																LANGUAGES[command] +" testing.txt");
 
 								consoleForm.addProc(runtime, f);
 							} catch (Exception ex) {
@@ -166,8 +171,8 @@ public class GUI {
 							break;
 						case 117: // f6
 							if (EditorForm.fileName != null) {
-								file.writeStringArrayToFile(EditorForm.fileName, codeForm
-																.toString().split("\n"));
+								file.writeToFile(EditorForm.fileName, codeForm
+																.toString());
 							}
 							break;
 						case 17: // ctrl button press; control *characters* handled separately
@@ -220,8 +225,7 @@ public class GUI {
 			} catch (IOException ex) {
 			}
 			if (!"".equals(fileName)) {
-				file.writeStringArrayToFile(fileName, codeForm.toString()
-												.split("\n"));
+				file.writeToFile(fileName, codeForm.toString());
 				EditorForm.fileName = fileName;
 			}
 		}
@@ -499,8 +503,8 @@ public static final boolean USESCROLLBAR = false;
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				if (EditorForm.fileName != null && !EditorForm.fileName.equals("")) {
-					file.writeStringArrayToFile(EditorForm.fileName, codeForm
-													.toString().split("\n"));
+					file.writeToFile(EditorForm.fileName, codeForm
+													.toString());
 				} else {
 					saveFileAs();
 				}

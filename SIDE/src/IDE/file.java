@@ -192,8 +192,7 @@ public class file {
 			File aFile = new File(fileName);
 			FileWriter myWriter = new FileWriter(aFile);
 			output = new BufferedWriter(myWriter);
-			output.write(stuff);
-			output.newLine(); 
+			output.write(stuff); 
 			output.close(); 
 		} catch (Exception e) {
 
@@ -252,6 +251,7 @@ public class file {
 		}
 
 	}
+	
 	public static void writeStringArrayToFile(String fileName, String... intArray) {
 
 		BufferedWriter output = null;
