@@ -160,9 +160,9 @@ public class GUI {
 							try {
 
 								consoleForm.clear();
-								System.out.println(LANGUAGES[command] +" " + Silos.IDEFileName);
+								//System.out.println(LANGUAGES[command] +" " + Silos.IDEFileName);
 								Process runtime = Runtime.getRuntime().exec(
-																LANGUAGES[command] +" testing.txt");
+																LANGUAGES[command] +" "+ Silos.IDEFileName);
 
 								consoleForm.addProc(runtime, f);
 							} catch (Exception ex) {

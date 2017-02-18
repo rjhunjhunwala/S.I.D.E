@@ -3,6 +3,8 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.swing.JFrame;
 
@@ -83,6 +85,7 @@ static Process lastProcess = null;
       }
     }.start();
   STDIN = (proc.getOutputStream());
+		
 		}
 
   @Override
@@ -112,9 +115,14 @@ static Process lastProcess = null;
           in[i] = input.get(i);
         }
         try {
+									if(!GUI.LANGUAGE.equals("Retina")||input.size()>1){
           STDIN.write(in);
           STDIN.flush();
-        } catch (IOException e) {
+									}
+         if(GUI.LANGUAGE.equals("Retina")){
+										STDIN.close();
+									}
+								} catch (IOException e) {
           STDIN = null;
           while (canBackspace(humanCursor)) {
             applyFormInput(humanCursor, (char) 8, new Cursor[] {});

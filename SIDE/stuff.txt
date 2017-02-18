@@ -1,7 +1,2 @@
-#?.*
-print"This program wasn't written in Python, it was built for Retina!"
-#?.*t"
-
-#?(\w+)(,.* )(.+)!"
-#$3$2$1!
-#
+.
+$&$&
