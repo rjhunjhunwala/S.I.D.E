@@ -500,6 +500,26 @@ public class Silos {
 					mem = new int[8192];//default size if there is no allocation specified
 				}
 			}
+			int progSize = tokens.size();
+			for(String s:tokens){
+								for (int j = 1;j < replace.length; j += 2) {
+					s = s.replaceAll(replace[j], replace[j + 1]);
+				}
+				String[] temp = s.split(" ");
+				if(temp[0].equals("leverage")){
+					for(int i =1;i<temp.length;i++){
+					 if(!temp[i].equals("stdlib")){
+						textFile = new File(temp[i]);
+			 sc = new Scanner(textFile);
+									while (sc.hasNextLine()) {
+				tokens.add(sc.nextLine().replaceAll("^\\s+", ""));
+			}
+					}else{
+							
+						}
+					}
+				}
+			}
 			ArrayList<String> labels = new ArrayList<>();
 			ArrayList<Integer> label_pos = new ArrayList<>();
 			ArrayList<String> label_temp = new ArrayList<>();
@@ -516,7 +536,7 @@ public class Silos {
 												|| command.startsWith("/*")) {
 					continue;
 				}
-				for (int j = 1; j < replace.length; j += 2) {
+				for (int j = 1; i<progSize&&j < replace.length; j += 2) {
 					command = command.replaceAll(replace[j], replace[j + 1]);
 				}
 				if (command.length() == 0) {
@@ -1345,7 +1365,6 @@ public class Silos {
 			}
 		}
 	}
-
 	public static String program = "";
 
 	/**
