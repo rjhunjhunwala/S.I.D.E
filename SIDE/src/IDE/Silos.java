@@ -1393,31 +1393,67 @@ ArrayList<Double> ret = new ArrayList<>();
 		* @return 
 		*/
 	public static int parse(String toParse){
+Stack<Integer> match = new Stack<>();
+int[] matchMap = new int[toParse.length()];
 
-ArrayList<Double> num = parseToInt(new ArrayList<>(Arrays.asList(toParse.split("[\\Q=+-*%/\\E]"))));
+for(int i=0;i<toParse.length();i++){
+	if(toParse.charAt(i)=='('){
+		match.push(i);
+	}else if(toParse.charAt(i)==')'){
+		int temp = match.pop();
+		matchMap[i] = temp;
+		matchMap[temp]  = i;
+	}else{
+		matchMap[i]=-1;
+	}
+}
+//System.out.println(Arrays.toString(matchMap));
+int firstIndex = -1;
+for(int i=0;i<matchMap.length;i++){
+	if(matchMap[i]>=0){
+		firstIndex=i;
+		break;
+	}
+}
+if(firstIndex>=0){
+return parse(toParse.substring(0,firstIndex)+parse(toParse.substring(firstIndex+1,matchMap[firstIndex]))+toParse.substring(matchMap[firstIndex]+1));	
+}else{
+ArrayList<Double> num = parseToInt(new ArrayList<>(Arrays.asList(toParse.split("[\\Q+-^*%/\\E]"))));
 
 ArrayList<Character> operations = new ArrayList<>();
 for(char c:toParse.toCharArray()){
-	if("*/%+-".contains(c+"")){
+	if("^*/%+-".contains(c+"")){
 		operations.add(c);
+	}
+}
+
+//pemdas, comes back to bite me
+
+for(int i=0;i<operations.size();i++){
+	if("^".contains(operations.get(i)+"")){
+	//	System.out.println(num+"|"+operations);
+		num.add(i,operate(operations.remove(i),num.remove(i),num.remove(i)));
+		i--;
 	}
 }
 for(int i=0;i<operations.size();i++){
 	if("*/%".contains(operations.get(i)+"")){
-		System.out.println(num+"|"+operations);
+	//	System.out.println(num+"|"+operations);
 		num.add(i,operate(operations.remove(i),num.remove(i),num.remove(i)));
 		i--;
 	}
 }
 for(int i=0;i<operations.size();i++){
 	if("+-".contains(operations.get(i)+"")){
-		System.out.println(num+"|"+operations);
+	//	System.out.println(num+"|"+operations);
 		num.add(i,operate(operations.remove(i),num.remove(i),num.remove(i)));
 		i--;
 	}
 }
 		return (int) num.get(0).doubleValue();
-	}
+}
+
+}
 	/**
 		* a op b
 		* @param op
@@ -1437,6 +1473,8 @@ for(int i=0;i<operations.size();i++){
 				return a/b;
 			case '%':
 				return a%b;
+			case '^':
+				return Math.pow(a, b);
 			default:
 				return -1.1111;
 		}
