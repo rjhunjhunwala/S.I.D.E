@@ -103,6 +103,14 @@ public class Silos {
 		return line;
 	}
 
+	private static ArrayList<Double> parseToInt(ArrayList<String> arrayList) {
+ArrayList<Double> ret = new ArrayList<>();
+	for(String s: arrayList){
+		ret.add(Double.parseDouble(s));
+	}
+	return ret;
+	}
+
 	static class Input implements KeyListener {
 
 		static int[] bindings = new int[]{};
@@ -163,6 +171,7 @@ public class Silos {
 	 * generally disable interactivity.
 	 */
 	public static void main(String... args) {
+		System.out.println(parse(new Scanner(System.in).nextLine()));
 		for (int i = 0; i < SIZE; i++) {
 			q[i] = new ArrayDeque<Integer>();
 			stacks[i] = new Stack<Integer>();
@@ -1378,4 +1387,58 @@ public class Silos {
 		return ((mode >> index) & 1) == VARIABLE ? mem[argument] : argument;
 	}
 
+	/**
+		* Evaluates a mathematical expression, take two.
+		* @param toParse
+		* @return 
+		*/
+	public static int parse(String toParse){
+
+ArrayList<Double> num = parseToInt(new ArrayList<>(Arrays.asList(toParse.split("[\\Q=+-*%/\\E]"))));
+
+ArrayList<Character> operations = new ArrayList<>();
+for(char c:toParse.toCharArray()){
+	if("*/%+-".contains(c+"")){
+		operations.add(c);
+	}
+}
+for(int i=0;i<operations.size();i++){
+	if("*/%".contains(operations.get(i)+"")){
+		System.out.println(num+"|"+operations);
+		num.add(i,operate(operations.remove(i),num.remove(i),num.remove(i)));
+		i--;
+	}
+}
+for(int i=0;i<operations.size();i++){
+	if("+-".contains(operations.get(i)+"")){
+		System.out.println(num+"|"+operations);
+		num.add(i,operate(operations.remove(i),num.remove(i),num.remove(i)));
+		i--;
+	}
+}
+		return (int) num.get(0).doubleValue();
+	}
+	/**
+		* a op b
+		* @param op
+		* @param a
+		* @param b
+		* @return 
+		*/
+	public static double operate(char op, double a, double b){
+		switch(op){
+			case '+':
+				return a+b;
+			case '-':
+				return a-b;
+			case '*':
+				return a*b;
+			case '/':
+				return a/b;
+			case '%':
+				return a%b;
+			default:
+				return -1.1111;
+		}
+	}
 }
