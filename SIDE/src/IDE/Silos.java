@@ -106,8 +106,12 @@ public class Silos {
 	private static ArrayList<Double> parseToInt(ArrayList<String> arrayList) {
 ArrayList<Double> ret = new ArrayList<>();
 	for(String s: arrayList){
+		try{
 		ret.add(Double.parseDouble(s));
-	}
+		}catch(Exception ex){
+		ret.add(mem[s.charAt(0)]/1.0);
+		}
+		}
 	return ret;
 	}
 
