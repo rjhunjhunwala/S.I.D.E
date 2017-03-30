@@ -86,6 +86,7 @@ public class Silos {
 
 	private final static int INTEGER = 0;
 	private final static int VARIABLE = 1;
+	private final static int PARSABLE = 2;
 
 	private final static int ELLIPSE = 0;
 	private final static int SQUARE = 1;
@@ -174,8 +175,7 @@ public class Silos {
 	 * will generally disable interactivity.
 	 */
 	public static void main(String... args) {
-		System.out.println(Double.parseDouble(new Scanner(System.in).nextLine()));
-		System.out.println(parse(new Scanner(System.in).nextLine()));
+
 		for (int i = 0; i < SIZE; i++) {
 			q[i] = new ArrayDeque<Integer>();
 			stacks[i] = new Stack<Integer>();
@@ -264,7 +264,11 @@ public class Silos {
 						System.out.print(evalToken(Silos.VARIABLE, tokens[1], 0));
 						break;
 					case ASSIGN:
-						mem[tokens[1]] = evalToken(tokens[0], tokens[2], 0);
+						if (((tokens[0] >> 1) & 1) == 1) {
+							mem[tokens[1]] = (int) parse(texts[tokens[2]]);
+						} else {
+							mem[tokens[1]] = evalToken(tokens[0], tokens[2], 0);
+						}
 						break;
 					case STACK:
 
@@ -484,10 +488,10 @@ public class Silos {
 	static int[] memory;
 
 	/**
+	 * Compile the program, and link other sources
 	 *
-	 * @param fileName is the path to the file or just the name if it is local
-	 * @return an array of Strings where each string is one line from the file
-	 * fileName.
+	 * @param fileName
+	 * @return
 	 */
 	@SuppressWarnings({"rawtypes", "unchecked"})
 	public static int[][] compile(String fileName) {
@@ -1188,22 +1192,30 @@ public class Silos {
 					if (instr == Silos.ABS || instr == Silos.NOT) {
 						program.add(new int[]{instr, arg1});
 					} else if (instr == Silos.ASSIGN) {
-						try {
-							arg2 = Integer.parseInt(words[2]);
-							mode = Silos.INTEGER;
-						} catch (Exception e) {
+//If the last phrase is a mathematical expression
+						if (words[2].matches("(.*)[\\Q()*-+/^\\E](.*)")) {
+							arg2 = texts.size();
+							texts.add(words[2]);
+							mode = Silos.PARSABLE;
+							//System.out.println("SADSDSAD"+words[2]+texts+arg2);
+						} else {
 							try {
+								arg2 = Integer.parseInt(words[2]);
+								mode = Silos.INTEGER;
+							} catch (Exception e) {
 								try {
-									arg2 = Integer.parseInt(words[3]);
-									mode = Silos.INTEGER;
+									try {
+										arg2 = Integer.parseInt(words[3]);
+										mode = Silos.INTEGER;
+									} catch (Exception ex) {
+										arg2 = (int) words[3].charAt(0);
+										mode = Silos.VARIABLE;
+									}
+									instr = Silos.GET;
 								} catch (Exception ex) {
-									arg2 = (int) words[3].charAt(0);
+									arg2 = (int) words[2].charAt(0);
 									mode = Silos.VARIABLE;
 								}
-								instr = Silos.GET;
-							} catch (Exception ex) {
-								arg2 = (int) words[2].charAt(0);
-								mode = Silos.VARIABLE;
 							}
 						}
 						program.add(new int[]{instr + mode, arg1, arg2});
@@ -1390,14 +1402,21 @@ public class Silos {
 	private static int evalToken(int mode, int argument, int index) {
 		return ((mode >> index) & 1) == VARIABLE ? mem[argument] : argument;
 	}
-
+public static double parse(String toParse){
+	//System.out.println("asDASDASDASDASDASD"+toParse);
+	try{
+		return Double.parseDouble(toParse);
+	}catch(Exception ex){
+	return(parser(toParse));
+	}
+}
 	/**
 	 * Evaluates a mathematical expression, take two.
 	 *
 	 * @param toParse
 	 * @return
 	 */
-	public static double parse(String toParse) {
+	public static double parser(String toParse) {
 		toParse = toParse.replaceAll(" ", "");
 		Stack<Integer> match = new Stack<>();
 		int[] matchMap = new int[toParse.length()];
@@ -1426,15 +1445,23 @@ public class Silos {
 			s = Double.parseDouble(s) > 0 ? s : "\\" + s.substring(1);
 			return parse(toParse.substring(0, firstIndex) + s + toParse.substring(matchMap[firstIndex] + 1));
 		} else {
+
+			
 			ArrayList<Double> num = parseToInt(new ArrayList<>(Arrays.asList(toParse.split("[\\Q+-^*%/\\E]"))));
 
 			ArrayList<Character> operations = new ArrayList<>();
+
 			for (char c : toParse.toCharArray()) {
 				if ("^*/%+-".contains(c + "")) {
 					operations.add(c);
 				}
 			}
 
+						if(toParse.charAt(0)=='-'){
+				num.set(0,num.get(0)*-1);
+						operations.remove(0);
+						}
+						if(operations.size()==0)return num.get(0);
 //pemdas, comes back to bite me
 			for (int i = 0; i < operations.size(); i++) {
 				if ("^".contains(operations.get(i) + "")) {
@@ -1457,7 +1484,7 @@ public class Silos {
 					i--;
 				}
 			}
-			return (int) num.get(0).doubleValue();
+			return  num.get(0).doubleValue();
 		}
 
 	}
