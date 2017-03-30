@@ -4,7 +4,6 @@ package IDE;
  *Feel free to modify and distribute the code and all relevant documentation
  * This code is provided as is and the author
  */
-
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
@@ -104,15 +103,15 @@ public class Silos {
 	}
 
 	private static ArrayList<Double> parseToInt(ArrayList<String> arrayList) {
-ArrayList<Double> ret = new ArrayList<>();
-	for(String s: arrayList){
-		try{
-		ret.add(Double.parseDouble(s));
-		}catch(Exception ex){
-		ret.add(mem[s.charAt(0)]/1.0);
+		ArrayList<Double> ret = new ArrayList<>();
+		for (String s : arrayList) {
+			try {
+				ret.add(Double.parseDouble(s.replaceAll("\\Q\\\\E", "-")));
+			} catch (Exception ex) {
+				ret.add(mem[s.charAt(0)] / 1.0);
+			}
 		}
-		}
-	return ret;
+		return ret;
 	}
 
 	static class Input implements KeyListener {
@@ -170,11 +169,12 @@ ArrayList<Double> ret = new ArrayList<>();
 	 * The main interpretation code
 	 *
 	 * @param args the command line arguments to be passed from the online
-	 * interpreter the first argument represents a fileName, and the rest represent
-	 * a source of input Feeding in any number of command line arguments will
-	 * generally disable interactivity.
+	 * interpreter the first argument represents a fileName, and the rest
+	 * represent a source of input Feeding in any number of command line arguments
+	 * will generally disable interactivity.
 	 */
 	public static void main(String... args) {
+		System.out.println(Double.parseDouble(new Scanner(System.in).nextLine()));
 		System.out.println(parse(new Scanner(System.in).nextLine()));
 		for (int i = 0; i < SIZE; i++) {
 			q[i] = new ArrayDeque<Integer>();
@@ -363,9 +363,9 @@ ArrayList<Double> ret = new ArrayList<>();
 					case CANVAS:
 						if (interactive) {
 							Canvas.createCanvas(
-															evalToken(tokens[0], tokens[1], 0),
-															evalToken(tokens[0], tokens[2], 1),
-															texts[tokens[3]]
+								evalToken(tokens[0], tokens[1], 0),
+								evalToken(tokens[0], tokens[2], 1),
+								texts[tokens[3]]
 							);
 						}
 						break;
@@ -397,9 +397,9 @@ ArrayList<Double> ret = new ArrayList<>();
 					case PEN:
 						if (Canvas.createdCanvas) {
 							Canvas.pen = new Color(
-															evalToken(tokens[0], tokens[1], 0),
-															evalToken(tokens[0], tokens[2], 1),
-															evalToken(tokens[0], tokens[3], 2)
+								evalToken(tokens[0], tokens[1], 0),
+								evalToken(tokens[0], tokens[2], 1),
+								evalToken(tokens[0], tokens[3], 2)
 							);
 						}
 						break;
@@ -514,21 +514,21 @@ ArrayList<Double> ret = new ArrayList<>();
 				}
 			}
 			int progSize = tokens.size();
-			for(String s:tokens){
-								for (int j = 1;j < replace.length; j += 2) {
+			for (String s : tokens) {
+				for (int j = 1; j < replace.length; j += 2) {
 					s = s.replaceAll(replace[j], replace[j + 1]);
 				}
 				String[] temp = s.split(" ");
-				if(temp[0].equals("leverage")){
-					for(int i =1;i<temp.length;i++){
-					 if(!temp[i].equals("stdlib")){
-						textFile = new File(temp[i]);
-			 sc = new Scanner(textFile);
-									while (sc.hasNextLine()) {
-				tokens.add(sc.nextLine().replaceAll("^\\s+", ""));
-			}
-					}else{
-							
+				if (temp[0].equals("leverage")) {
+					for (int i = 1; i < temp.length; i++) {
+						if (!temp[i].equals("stdlib")) {
+							textFile = new File(temp[i]);
+							sc = new Scanner(textFile);
+							while (sc.hasNextLine()) {
+								tokens.add(sc.nextLine().replaceAll("^\\s+", ""));
+							}
+						} else {
+
 						}
 					}
 				}
@@ -543,13 +543,13 @@ ArrayList<Double> ret = new ArrayList<>();
 			for (int i = 0; i < tokens.size(); i++) {
 				String command = tokens.get(i);
 				if (command.startsWith("def")
-												|| command.startsWith("//")
-												|| command.startsWith("#")
-												|| command.startsWith("*")
-												|| command.startsWith("/*")) {
+					|| command.startsWith("//")
+					|| command.startsWith("#")
+					|| command.startsWith("*")
+					|| command.startsWith("/*")) {
 					continue;
 				}
-				for (int j = 1; i<progSize&&j < replace.length; j += 2) {
+				for (int j = 1; i < progSize && j < replace.length; j += 2) {
 					command = command.replaceAll(replace[j], replace[j + 1]);
 				}
 				if (command.length() == 0) {
@@ -689,7 +689,7 @@ ArrayList<Double> ret = new ArrayList<>();
 					}
 					continue;
 				}
-								if (instruction.equals("loadLinePopUp")) {
+				if (instruction.equals("loadLinePopUp")) {
 					if (command_clone.length() > 14) {
 						String text = command_clone.substring(14);
 						int index = texts.indexOf(text);
@@ -1392,91 +1392,96 @@ ArrayList<Double> ret = new ArrayList<>();
 	}
 
 	/**
-		* Evaluates a mathematical expression, take two.
-		* @param toParse
-		* @return 
-		*/
-	public static int parse(String toParse){
-Stack<Integer> match = new Stack<>();
-int[] matchMap = new int[toParse.length()];
+	 * Evaluates a mathematical expression, take two.
+	 *
+	 * @param toParse
+	 * @return
+	 */
+	public static double parse(String toParse) {
+		toParse = toParse.replaceAll(" ", "");
+		Stack<Integer> match = new Stack<>();
+		int[] matchMap = new int[toParse.length()];
 
-for(int i=0;i<toParse.length();i++){
-	if(toParse.charAt(i)=='('){
-		match.push(i);
-	}else if(toParse.charAt(i)==')'){
-		int temp = match.pop();
-		matchMap[i] = temp;
-		matchMap[temp]  = i;
-	}else{
-		matchMap[i]=-1;
-	}
-}
+		for (int i = 0; i < toParse.length(); i++) {
+			if (toParse.charAt(i) == '(') {
+				match.push(i);
+			} else if (toParse.charAt(i) == ')') {
+				int temp = match.pop();
+				matchMap[i] = temp;
+				matchMap[temp] = i;
+			} else {
+				matchMap[i] = -1;
+			}
+		}
 //System.out.println(Arrays.toString(matchMap));
-int firstIndex = -1;
-for(int i=0;i<matchMap.length;i++){
-	if(matchMap[i]>=0){
-		firstIndex=i;
-		break;
-	}
-}
-if(firstIndex>=0){
-return parse(toParse.substring(0,firstIndex)+parse(toParse.substring(firstIndex+1,matchMap[firstIndex]))+toParse.substring(matchMap[firstIndex]+1));	
-}else{
-ArrayList<Double> num = parseToInt(new ArrayList<>(Arrays.asList(toParse.split("[\\Q+-^*%/\\E]"))));
+		int firstIndex = -1;
+		for (int i = 0; i < matchMap.length; i++) {
+			if (matchMap[i] >= 0) {
+				firstIndex = i;
+				break;
+			}
+		}
+		if (firstIndex >= 0) {
+			String s = parse(toParse.substring(firstIndex + 1, matchMap[firstIndex])) + "";
+			s = Double.parseDouble(s) > 0 ? s : "\\" + s.substring(1);
+			return parse(toParse.substring(0, firstIndex) + s + toParse.substring(matchMap[firstIndex] + 1));
+		} else {
+			ArrayList<Double> num = parseToInt(new ArrayList<>(Arrays.asList(toParse.split("[\\Q+-^*%/\\E]"))));
 
-ArrayList<Character> operations = new ArrayList<>();
-for(char c:toParse.toCharArray()){
-	if("^*/%+-".contains(c+"")){
-		operations.add(c);
-	}
-}
+			ArrayList<Character> operations = new ArrayList<>();
+			for (char c : toParse.toCharArray()) {
+				if ("^*/%+-".contains(c + "")) {
+					operations.add(c);
+				}
+			}
 
 //pemdas, comes back to bite me
+			for (int i = 0; i < operations.size(); i++) {
+				if ("^".contains(operations.get(i) + "")) {
+					//	System.out.println(num+"|"+operations);
+					num.add(i, operate(operations.remove(i), num.remove(i), num.remove(i)));
+					i--;
+				}
+			}
+			for (int i = 0; i < operations.size(); i++) {
+				if ("*/%".contains(operations.get(i) + "")) {
+					//	System.out.println(num+"|"+operations);
+					num.add(i, operate(operations.remove(i), num.remove(i), num.remove(i)));
+					i--;
+				}
+			}
+			for (int i = 0; i < operations.size(); i++) {
+				if ("+-".contains(operations.get(i) + "")) {
+					//	System.out.println(num+"|"+operations);
+					num.add(i, operate(operations.remove(i), num.remove(i), num.remove(i)));
+					i--;
+				}
+			}
+			return (int) num.get(0).doubleValue();
+		}
 
-for(int i=0;i<operations.size();i++){
-	if("^".contains(operations.get(i)+"")){
-	//	System.out.println(num+"|"+operations);
-		num.add(i,operate(operations.remove(i),num.remove(i),num.remove(i)));
-		i--;
 	}
-}
-for(int i=0;i<operations.size();i++){
-	if("*/%".contains(operations.get(i)+"")){
-	//	System.out.println(num+"|"+operations);
-		num.add(i,operate(operations.remove(i),num.remove(i),num.remove(i)));
-		i--;
-	}
-}
-for(int i=0;i<operations.size();i++){
-	if("+-".contains(operations.get(i)+"")){
-	//	System.out.println(num+"|"+operations);
-		num.add(i,operate(operations.remove(i),num.remove(i),num.remove(i)));
-		i--;
-	}
-}
-		return (int) num.get(0).doubleValue();
-}
 
-}
 	/**
-		* a op b
-		* @param op
-		* @param a
-		* @param b
-		* @return 
-		*/
-	public static double operate(char op, double a, double b){
-		switch(op){
+	 * a op b
+	 *
+	 * @param op
+	 * @param a
+	 * @param b
+	 * @return
+	 */
+	public static double operate(char op, double a, double b) {
+		switch (op) {
 			case '+':
-				return a+b;
+				return a + b;
 			case '-':
-				return a-b;
+				return a - b;
 			case '*':
-				return a*b;
+				return a * b;
 			case '/':
-				return a/b;
+				return a / b;
 			case '%':
-				return a%b;
+				return a % b;
 			case '^':
 				return Math.pow(a, b);
 			default:
