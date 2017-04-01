@@ -1,4 +1,4 @@
-package IDE;
+
 
 /*
  *Feel free to modify and distribute the code and all relevant documentation
@@ -30,6 +30,7 @@ import javax.swing.JPanel;
  */
 public class Silos {
 
+	public static final String[] stdlib = {};
 	public static final int SIZE = 32;
 	public static final Stack<Integer>[] stacks = new Stack[SIZE];
 	public static final ArrayDeque<Integer>[] q = new ArrayDeque[SIZE];
@@ -517,10 +518,18 @@ public class Silos {
 					mem = new int[8192];//default size if there is no allocation specified
 				}
 			}
+
 			int progSize = tokens.size();
-			for (String s : tokens) {
+			String[] stuff = new String[progSize];
+			for (int i = 0; i < progSize; i++) {
+				stuff[i] = tokens.get(i);
+			}
+String[] replace2= null;
+String t;
+			for (String s : stuff) {
+				String s1 = s;
 				for (int j = 1; j < replace.length; j += 2) {
-					s = s.replaceAll(replace[j], replace[j + 1]);
+					s1 = s1.replaceAll(replace[j], replace[j + 1]);
 				}
 				String[] temp = s.split(" ");
 				if (temp[0].equals("leverage")) {
@@ -529,10 +538,19 @@ public class Silos {
 							textFile = new File(temp[i]);
 							sc = new Scanner(textFile);
 							while (sc.hasNextLine()) {
-								tokens.add(sc.nextLine().replaceAll("^\\s+", ""));
+			t = sc.nextLine();
+			 t= t.replaceAll("^\\s+", "");
+				if(t.startsWith("def")){
+					replace2 = t.split(" ");
+				}else if(replace2!=null){
+				for (int j = 1; j < replace2.length; j += 2) {
+					 t= t.replaceAll(replace2[j], replace2[j + 1]);
+				}					
+				}
+				 tokens.add(t);
 							}
 						} else {
-
+							tokens.addAll(Arrays.asList(stdlib));
 						}
 					}
 				}
@@ -1402,14 +1420,16 @@ public class Silos {
 	private static int evalToken(int mode, int argument, int index) {
 		return ((mode >> index) & 1) == VARIABLE ? mem[argument] : argument;
 	}
-public static double parse(String toParse){
-	//System.out.println("asDASDASDASDASDASD"+toParse);
-	try{
-		return Double.parseDouble(toParse);
-	}catch(Exception ex){
-	return(parser(toParse));
+
+	public static double parse(String toParse) {
+		//System.out.println("asDASDASDASDASDASD"+toParse);
+		try {
+			return Double.parseDouble(toParse);
+		} catch (Exception ex) {
+			return (parser(toParse));
+		}
 	}
-}
+
 	/**
 	 * Evaluates a mathematical expression, take two.
 	 *
@@ -1446,7 +1466,6 @@ public static double parse(String toParse){
 			return parse(toParse.substring(0, firstIndex) + s + toParse.substring(matchMap[firstIndex] + 1));
 		} else {
 
-			
 			ArrayList<Double> num = parseToInt(new ArrayList<>(Arrays.asList(toParse.split("[\\Q+-^*%/\\E]"))));
 
 			ArrayList<Character> operations = new ArrayList<>();
@@ -1457,11 +1476,13 @@ public static double parse(String toParse){
 				}
 			}
 
-						if(toParse.charAt(0)=='-'){
-				num.set(0,num.get(0)*-1);
-						operations.remove(0);
-						}
-						if(operations.size()==0)return num.get(0);
+			if (toParse.charAt(0) == '-') {
+				num.set(0, num.get(0) * -1);
+				operations.remove(0);
+			}
+			if (operations.isEmpty()) {
+				return num.get(0);
+			}
 //pemdas, comes back to bite me
 			for (int i = 0; i < operations.size(); i++) {
 				if ("^".contains(operations.get(i) + "")) {
@@ -1484,7 +1505,7 @@ public static double parse(String toParse){
 					i--;
 				}
 			}
-			return  num.get(0).doubleValue();
+			return num.get(0).doubleValue();
 		}
 
 	}
@@ -1512,6 +1533,7 @@ public static double parse(String toParse){
 			case '^':
 				return Math.pow(a, b);
 			default:
+				System.err.println("Malformed pattern, did not recognize the character:\"" + op + "\" as a valid operation ");
 				return -1.1111;
 		}
 	}
