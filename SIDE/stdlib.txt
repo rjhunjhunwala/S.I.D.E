@@ -1,11 +1,11 @@
 GOTO EndOfTheStandardLibraries
 /**
 * This is the source code presented for the standard libraries of SILOS
-* There is no need to download this file as it is attached with the release (in "Silos.java")
-* simply import this library by using "leverage stdlib"
+* There is no need to download this file as it is attached with the release (in \"Silos.java\")
+* simply import this library by using \"leverage stdlib\"
 * To make a library of your own, follow the standards presented in this code. Most notably,
 * Start the code with a goto to skip all of the utility methods. 
-* Then, to import your code use "leverage fileName.txt" (replacing with the fully qualified file name)
+* Then, to import your code use \"leverage fileName.txt\" (replacing with the fully qualified file name)
 */
 
 //Trig Methods
@@ -51,4 +51,9 @@ return
 
 //This method will help new users by providing documentation
 funcHelp
+printLine GitHub for this language
+printLine https://github.com/rjhunjhunwala/S.I.L.O.S
+printLine IDE for this language
+printLine https://github.com/rjhunjhunwala/S.I.D.E
+return
 lblEndOfTheStandardLibraries
