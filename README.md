@@ -17,7 +17,7 @@ You must Provide the following
 <ul>
 <li>- A command i.e "lang -args foo.lang" (note no trailing space) which will then be passed a file name as a CLA and runs the given file as a program in LANGUAGENAME</li>
 </ul>
-## You may optionally provide the following
+<h2> You may optionally provide the following<h2>
 <ul>
 <li> A file named LANGUAGENAME.COLORS.txt which is formatted like so </li>
 <ul>
@@ -43,7 +43,7 @@ Help text to display if the current line matches the regex
 Regex
 Help text to display if the current line matches the regex
 </pre>
-Lastly, you must add your languages name and command on seperate lines into the languages.txt file
+Lastly, (this is the part that matters) you must add your language's name and command on seperate lines into the languages.txt file
 <pre>
 lang1
 command1
@@ -53,6 +53,7 @@ lang3
 command3
 etc...
 </pre>
+Once you do this, feel free to commit your interpreter to the repository. Support for your language has now been seamlessly integrated into this IDE.
 <hr/>
 Screenshot
 
