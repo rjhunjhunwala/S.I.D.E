@@ -56,5 +56,7 @@ etc...
 Once you do this, feel free to commit your interpreter to the repository. Support for your language has now been seamlessly integrated into this IDE.
 <hr/>
 Screenshot
-
+Light Theme
 ![alt tag](https://raw.githubusercontent.com/rjhunjhunwala/S.I.D.E/master/Screenshot.png)
+Dark Theme
+![alt tag](https://raw.githubusercontent.com/rjhunjhunwala/S.I.D.E/master/LightTheme.png)
