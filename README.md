@@ -55,12 +55,13 @@ etc...
 </pre>
 Once you do this, feel free to commit your interpreter to the repository. Support for your language has now been seamlessly integrated into this IDE.
 <hr/>
-#Screenshots
 
-##Light Theme
+<h1>Screenshots</h1>
+
+<h2>Dark Theme</h2>
 
 ![alt tag](https://raw.githubusercontent.com/rjhunjhunwala/S.I.D.E/master/Screenshot.png)
 
-##ark Theme
+<h2>Light Theme</h2>
 
 ![alt tag](https://raw.githubusercontent.com/rjhunjhunwala/S.I.D.E/master/LightTheme.png)
