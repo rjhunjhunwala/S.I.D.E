@@ -1,12 +1,8 @@
 package IDE;
 
-
-
-
-
 /*
- *Feel free to modify and distribute the code and all relevant documentation
- * This code is provided as is and the author
+ * Feel free to modify and distribute the code and all relevant documentation
+ * This code is provided as is and the author explicitly disclaims any warranty
  */
 import java.awt.Color;
 import java.awt.Dimension;
@@ -18,25 +14,35 @@ import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Queue;
 import java.util.Scanner;
 import java.util.Stack;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 /**
- * S.I.L.O.S interpeter
+ * S.I.L.O.S interpreter S.I.L.O.S or SIL is a simple interpreted, imperative
+ * language
  *
  * @author rohan
  */
 public class Silos {
 
-	public static final String[] stdlib = {"GOTO EndOfTheStandardLibraries","/**","* This is the source code presented for the standard libraries of SILOS","* There is no need to download this file as it is attached with the release (in \"Silos.java\")","* simply import this library by using \"leverage stdlib\"","* To make a library of your own, follow the standards presented in this code. Most notably,","* Start the code with a goto to skip all of the utility methods. ","* Then, to import your code use \"leverage fileName.txt\" (replacing with the fully qualified file name)","*/","","//Trig Methods","","/**","* Sin method, returns sin(x/10000)*39916800 using an 11th order taylor polynomial","* Receives input via the top of the zeroth stack and uses the m M and ? variables","* returns to the top of the zeroth stack accurate to three significant figures from [-pi,pi]","*/","funcSinX","    stackPop 0","    m=(99792*m)/25-(2079*m^3)/312500000+(2079*m^5)/625000000000000000-(99*m^7)/125000000000000000000000000+(11*m^9)/100000000000000000000000000000000000-m^11/100000000000000000000000000000000000000000000 ","    stack 0 m","return","","/**","* Cos method returns 479001600*cos(x/10000) using an 12th order taylor polynomial","* receives input via the top of the zeroth stack and uses the m M and ? variables","*/","funcCosX","    stackPop 0","    m = 479001600*(1-m^2/200000000+m^4/240000000000000000-m^6/720000000000000000000000000+m^8/4032000000000000000000000000000000000-m^10/36288000000000000000000000000000000000000000000+m^12/479001600000000000000000000000000000000000000000000000000)","    stack 0 m","return","/**","* Echo out the first line of standard input uses m and M as a variable","*/","funcCat","    loadLine","    m=256","    M=get m","    lblTOPOFCATLOOP","        printChar M","        m+1","        M =get m","    if M TOPOFCATLOOP","return","//String manipulation Functions V","","//This area has been allocated for string manipulation functions","","//End of String manipulation Functions ^","","//This method will help new users by providing documentation","funcHelp","printLine GitHub for this language","printLine https://github.com/rjhunjhunwala/S.I.L.O.S","printLine IDE for this language","printLine https://github.com/rjhunjhunwala/S.I.D.E","return","lblEndOfTheStandardLibraries"};
-
+	/**
+	 * This string contains the source for the standard libraries. It contains four
+	 * methods which are case sensitive Help -> Outputs useful help information to
+	 * the console CosX returns 479001600*cos(x/10000) using a 12th order taylor
+	 * polynomial receives input via the top of the zeroth stack and uses the m M
+	 * and ? variables SinX returns sin(x/10000)*39916800 using an 11th order
+	 * taylor polynomial Receives input via the top of the zeroth stack and uses
+	 * the m M and ? variables returns to the top of the zeroth stack accurate to
+	 * three significant figures from [-pi,pi] and Cat functions as a cat program
+	 */
+	public static final String[] stdlib = {"GOTO EndOfTheStandardLibraries", "/**", "* This is the source code presented for the standard libraries of SILOS", "* There is no need to download this file as it is attached with the release (in \"Silos.java\")", "* simply import this library by using \"leverage stdlib\"", "* To make a library of your own, follow the standards presented in this code. Most notably,", "* Start the code with a goto to skip all of the utility methods. ", "* Then, to import your code use \"leverage fileName.txt\" (replacing with the fully qualified file name)", "*/", "", "//Trig Methods", "", "/**", "* Sin method, returns sin(x/10000)*39916800 using an 11th order taylor polynomial", "* Receives input via the top of the zeroth stack and uses the m M and ? variables", "* returns to the top of the zeroth stack accurate to three significant figures from [-pi,pi]", "*/", "funcSinX", "    stackPop 0", "    m=(99792*m)/25-(2079*m^3)/312500000+(2079*m^5)/625000000000000000-(99*m^7)/125000000000000000000000000+(11*m^9)/100000000000000000000000000000000000-m^11/100000000000000000000000000000000000000000000 ", "    stack 0 m", "return", "", "/**", "* Cos method returns 479001600*cos(x/10000) using an 12th order taylor polynomial", "* receives input via the top of the zeroth stack and uses the m M and ? variables", "*/", "funcCosX", "    stackPop 0", "    m = 479001600*(1-m^2/200000000+m^4/240000000000000000-m^6/720000000000000000000000000+m^8/4032000000000000000000000000000000000-m^10/36288000000000000000000000000000000000000000000+m^12/479001600000000000000000000000000000000000000000000000000)", "    stack 0 m", "return", "/**", "* Echo out the first line of standard input uses m and M as a variable", "*/", "funcCat", "    loadLine", "    m=256", "    M=get m", "    lblTOPOFCATLOOP", "        printChar M", "        m+1", "        M =get m", "    if M TOPOFCATLOOP", "return", "//String manipulation Functions V", "", "//This area has been allocated for string manipulation functions", "", "//End of String manipulation Functions ^", "", "//This method will help new users by providing documentation", "funcHelp", "printLine GitHub for this language", "printLine https://github.com/rjhunjhunwala/S.I.L.O.S", "printLine IDE for this language", "printLine https://github.com/rjhunjhunwala/S.I.D.E", "return", "lblEndOfTheStandardLibraries"};
+//The number of stacks and queues the user may access
 	public static final int SIZE = 32;
+
+	//Initialize stacks
 	public static final Stack<Integer>[] stacks = new Stack[SIZE];
 	public static final ArrayDeque<Integer>[] q = new ArrayDeque[SIZE];
 
@@ -44,8 +50,11 @@ public class Silos {
 	 * This integer[] represents the heap of memory which can be addressed
 	 */
 	private static int[] mem;
+
+	//Strings are stored in this array to avoid expensive runtime string operation
 	private static String[] texts;
 
+	//OPCODES
 	private final static int GOTO = 0 << 8;
 	private final static int GOSUB = 1 << 8;
 	private final static int RETURN = 2 << 8;
@@ -61,7 +70,7 @@ public class Silos {
 	private final static int LOADLINE = 12 << 8;
 	private final static int CANVAS = 13 << 8;
 	private final static int WAIT = 14 << 8;
-	private final static int DRAW = 15 << 8;
+	private final static int UNDOCOPCODE = 15 << 8;
 	private final static int PEN = 16 << 8;
 	private final static int BIND = 17 << 8;
 	private final static int REFRESH = 18 << 8;
@@ -89,13 +98,15 @@ public class Silos {
 	private static final int QUEUE_POP = 40 << 8;
 	private static final int POP_UP = 41 << 8;
 	private static final int GET_STRING_POP_UP = 42 << 8;
-
+ private static final int ALLOC = 43 << 8;
+	private static final int clear = 44 << 8;
+	
+	
+	//MODES
 	private final static int INTEGER = 0;
 	private final static int VARIABLE = 1;
 	private final static int PARSABLE = 2;
 
-	private final static int ELLIPSE = 0;
-	private final static int SQUARE = 1;
 
 	/**
 	 * Prints out the prompt and then returns the string user types
@@ -109,11 +120,15 @@ public class Silos {
 		return line;
 	}
 
-	private static ArrayList<Double> parseToInt(ArrayList<String> arrayList) {
+	/**
+	 * Takes in an arrayList of Strings and parses it to an array list of doubles.
+	 * It treats "\" as an escape for the minus sign
+	 */
+	private static ArrayList<Double> parseToDoubles(ArrayList<String> arrayList) {
 		ArrayList<Double> ret = new ArrayList<>();
 		for (String s : arrayList) {
 			try {
-				ret.add(Double.parseDouble(s.replaceAll("\\Q\\\\E", "-")));
+				ret.add(Double.parseDouble(s.replaceAll("rand", Math.random() + "").replaceAll("\\Q\\\\E", "-").replaceAll(" ", "")));
 			} catch (Exception ex) {
 				ret.add(mem[s.charAt(0)] / 1.0);
 			}
@@ -121,6 +136,9 @@ public class Silos {
 		return ret;
 	}
 
+	/**
+	 * Allows Programs to have (somewhat) asynchronous listening to keyboard input
+	 */
 	static class Input implements KeyListener {
 
 		static int[] bindings = new int[]{};
@@ -154,7 +172,6 @@ public class Silos {
 		}
 
 	}
-	static int[] vars;
 
 	static class Drawable {
 
@@ -170,24 +187,19 @@ public class Silos {
 			height = inHeight;
 		}
 	}
+
+//Files with this name are being invoked from the IDE
 	public static String IDEFileName = "234567890-45678900ihb567890oijhb213dsa_TempFILE_v";
 
 	/**
 	 * The main interpretation code
 	 *
 	 * @param args the command line arguments to be passed from the online
-	 * interpreter the first argument represents a fileName, and the rest
-	 * represent a source of input Feeding in any number of command line arguments
-	 * will generally disable interactivity.
+	 * interpreter the first argument represents a fileName, and the rest represent
+	 * a source of input Feeding in any number of command line arguments will
+	 * generally disable interactivity.
 	 */
 	public static void main(String... args) {
-//String[] s = file.getWordsFromFile("stdlib.txt");
-//System.out.print("{");
-//for(int i=0;i<s.length;i++){
-//	System.out.print("\""+s[i]+"\"");
-//	System.out.print(i==s.length-1?"}":",");
-//	
-//}
 		for (int i = 0; i < SIZE; i++) {
 			q[i] = new ArrayDeque<Integer>();
 			stacks[i] = new Stack<Integer>();
@@ -379,43 +391,22 @@ public class Silos {
 					case CANVAS:
 						if (interactive) {
 							Canvas.createCanvas(
-								evalToken(tokens[0], tokens[1], 0),
-								evalToken(tokens[0], tokens[2], 1),
-								texts[tokens[3]]
+															evalToken(tokens[0], tokens[1], 0),
+															evalToken(tokens[0], tokens[2], 1),
+															texts[tokens[3]]
 							);
 						}
 						break;
 					case WAIT:
 						Thread.sleep(evalToken(tokens[0], tokens[1], 0));
 						break;
-					case DRAW:
-						if (Canvas.createdCanvas) {
-							int startX = evalToken(tokens[0], tokens[1], 0);
-							int startY = evalToken(tokens[0], tokens[2], 1);
-							int widthX = evalToken(tokens[0], tokens[3], 2);
-							int widthY = evalToken(tokens[0], tokens[4], 3);
-							double a = widthX * widthX / 4;
-							double b = widthY * widthY / 4;
-							boolean square = ((tokens[0] >> 4) & 1) == Silos.SQUARE;
-							for (int i = startX; i < startX + widthX; i++) {
-								for (int j = startY; j < startY + widthY; j++) {
-									int xC = i - (startX + widthX / 2);
-									int yC = j - (startY + widthY / 2);
-									if (square || ((xC * xC) / a) + ((yC * yC) / b) < 1) {
-										if (i > 0 && j > 0 && i < Canvas.canvas.length && j < Canvas.canvas[i].length) {
-											Canvas.canvas[i][j] = Canvas.pen;
-										}
-									}
-								}
-							}
-						}
-						break;
+
 					case PEN:
 						if (Canvas.createdCanvas) {
 							Canvas.pen = new Color(
-								evalToken(tokens[0], tokens[1], 0),
-								evalToken(tokens[0], tokens[2], 1),
-								evalToken(tokens[0], tokens[3], 2)
+															evalToken(tokens[0], tokens[1], 0),
+															evalToken(tokens[0], tokens[2], 1),
+															evalToken(tokens[0], tokens[3], 2)
 							);
 						}
 						break;
@@ -438,6 +429,9 @@ public class Silos {
 		System.exit(0);
 	}
 
+	/**
+	 * GUI Class
+	 */
 	static class Canvas extends JFrame {
 
 		static class Panel extends JPanel {
@@ -457,8 +451,10 @@ public class Silos {
 					g.setColor(d.color);
 					if (d.type == 1) {
 						g.fillOval(d.x, d.y, d.width, d.height);
-					} else {
+					} else  if(d.type==0){
 						g.fillRect(d.x, d.y, d.width, d.height);
+					}else{
+						g.drawLine(d.x, d.y, d.x+d.width, d.y+d.height);
 					}
 				}
 			}
@@ -468,7 +464,7 @@ public class Silos {
 				return new Dimension(x, y);
 			}
 		}
-		public static Color[][] canvas;
+
 		public static Color pen = Color.black;
 		static boolean createdCanvas = false;
 		public static Canvas c;
@@ -482,28 +478,30 @@ public class Silos {
 			this.setLocationRelativeTo(null);
 			this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 			this.addKeyListener(new Input());
+			this.setResizable(false);
 		}
 
 		public static void createCanvas(int x, int y, String message) {
 			if (!createdCanvas) {
 				createdCanvas = true;
-				canvas = new Color[x][y];
-				for (int i = 0; i < canvas.length; i++) {
-					for (int j = 0; j < canvas[i].length; j++) {
-						canvas[i][j] = Color.white;
+				c = new Canvas(x, y, message);
 					}
 				}
-				c = new Canvas(x, y, message);
+
 			}
-		}
-	}
+		
+	
+
+	/**
+	 * Another way to temporarily hold the memory
+	 */
 	static int[] memory;
 
 	/**
 	 * Compile the program, and link other sources
 	 *
 	 * @param fileName
-	 * @return
+	 * @return A two dimensional integer array representing a parsed program
 	 */
 	@SuppressWarnings({"rawtypes", "unchecked"})
 	public static int[][] compile(String fileName) {
@@ -535,8 +533,8 @@ public class Silos {
 			for (int i = 0; i < progSize; i++) {
 				stuff[i] = tokens.get(i);
 			}
-String[] replace2= null;
-String t;
+			String[] replace2 = null;
+			String t;
 			for (String s : stuff) {
 				String s1 = s;
 				for (int j = 1; j < replace.length; j += 2) {
@@ -549,21 +547,21 @@ String t;
 							textFile = new File(temp[i]);
 							sc = new Scanner(textFile);
 							while (sc.hasNextLine()) {
-			t = sc.nextLine();
-			 t= t.replaceAll("^\\s+", "");
-				if(t.startsWith("def")){
-					replace2 = t.split(" ");
-				}else if(replace2!=null){
-				for (int j = 1; j < replace2.length; j += 2) {
-					 t= t.replaceAll(replace2[j], replace2[j + 1]);
-				}					
-				}
-				 tokens.add(t);
+								t = sc.nextLine();
+								t = t.replaceAll("^\\s+", "");
+								if (t.startsWith("def")) {
+									replace2 = t.split(" ");
+								} else if (replace2 != null) {
+									for (int j = 1; j < replace2.length; j += 2) {
+										t = t.replaceAll(replace2[j], replace2[j + 1]);
+									}
+								}
+								tokens.add(t);
 							}
 						} else {
-for(String line:stdlib){
-	tokens.add(line.replaceAll("^\\s+",""));
-}
+							for (String line : stdlib) {
+								tokens.add(line.replaceAll("^\\s+", ""));
+							}
 						}
 					}
 				}
@@ -578,18 +576,20 @@ for(String line:stdlib){
 			for (int i = 0; i < tokens.size(); i++) {
 				String command = tokens.get(i);
 				if (command.startsWith("def")
-					|| command.startsWith("//")
-					|| command.startsWith("#")
-					|| command.startsWith("*")
-					|| command.startsWith("/*")) {
+												|| command.startsWith("//")
+												|| command.startsWith("#")
+												|| command.startsWith("*")
+												|| command.startsWith("/*")) {
 					continue;
 				}
 				for (int j = 1; i < progSize && j < replace.length; j += 2) {
 					command = command.replaceAll(replace[j], replace[j + 1]);
 				}
+
 				if (command.length() == 0) {
 					continue;
 				}
+				String temp = command;
 				if (command.startsWith("lbl")) {
 					if (command.indexOf(' ') >= 0) {
 						//GOTO only takes the first token
@@ -688,6 +688,7 @@ for(String line:stdlib){
 					String func = words[1];
 					int index = func_temp.indexOf(func);
 					if (index == -1) {
+						System.err.println("Warning possible undeclared function. Could not find symbol:" + func + "\nThis could be because the function is undefined, or defined later.");
 						index = func_temp.size();
 						func_temp.add(func);
 					}
@@ -1100,49 +1101,8 @@ for(String line:stdlib){
 					program.add(new int[]{Silos.MOVEOBJ + (mode3 << 2) + (mode2 << 1) + (mode1), arg1, arg2, arg3});
 					continue;
 				}
-				//five arguments
-				if (instruction.equals("draw")) {
-					int mode1, mode2, mode3, mode4;
-					int arg1, arg2, arg3, arg4;
-					int shape;
-					if (words[1].equals("square")) {
-						shape = Silos.SQUARE;
-					} else {
-						shape = Silos.ELLIPSE;
-					}
-					try {
-						arg1 = Integer.parseInt(words[2]);
-						mode1 = Silos.INTEGER;
-					} catch (Exception e) {
-						arg1 = (int) words[2].charAt(0);
-						mode1 = Silos.VARIABLE;
-					}
-					try {
-						arg2 = Integer.parseInt(words[3]);
-						mode2 = Silos.INTEGER;
-					} catch (Exception e) {
-						arg2 = (int) words[3].charAt(0);
-						mode2 = Silos.VARIABLE;
-					}
-					try {
-						arg3 = Integer.parseInt(words[4]);
-						mode3 = Silos.INTEGER;
-					} catch (Exception e) {
-						arg3 = (int) words[4].charAt(0);
-						mode3 = Silos.VARIABLE;
-					}
-					try {
-						arg4 = Integer.parseInt(words[5]);
-						mode4 = Silos.INTEGER;
-					} catch (Exception e) {
-						arg4 = (int) words[5].charAt(0);
-						mode4 = Silos.VARIABLE;
-					}
-					program.add(new int[]{Silos.DRAW + (shape << 4) + (mode4 << 3) + (mode3 << 2) + (mode2 << 1) + (mode1), arg1, arg2, arg3, arg4});
-					continue;
-				}
-
-				//please
+				
+				//n arguments 
 				if (instruction.equals("bind")) {
 					int[] bindings = new int[words.length * 2 + 1];
 					bindings[0] = Silos.BIND;
@@ -1224,11 +1184,12 @@ for(String line:stdlib){
 						program.add(new int[]{instr, arg1});
 					} else if (instr == Silos.ASSIGN) {
 //If the last phrase is a mathematical expression
-						if (words[2].matches("(.*)[\\Q()*-+/^\\E](.*)")) {
+						String s;
+						if ((s = temp.substring(temp.lastIndexOf('=') + 1).replaceAll(" ", "")).matches("(.*)[\\Q()*%-+/^\\E](.*)") || words[2].contains("rand")) {
 							arg2 = texts.size();
-							texts.add(words[2]);
+							texts.add(s);
 							mode = Silos.PARSABLE;
-							//System.out.println("SADSDSAD"+words[2]+texts+arg2);
+//go into parsable mode
 						} else {
 							try {
 								arg2 = Integer.parseInt(words[2]);
@@ -1305,122 +1266,6 @@ for(String line:stdlib){
 		return null;
 	}
 
-	/**
-	 * A parser is currently under developement, it isn't integrated with the
-	 * language, but here is some code to show that it is under developement. It
-	 * defines an "expression" as a simple context free grammar
-	 */
-	private static class Parser {
-
-		private static void main(String[] args) {
-			System.out.println(parse(new java.util.Scanner(System.in).nextLine()));
-		}
-
-		/**
-		 * Evaluates a string as a grammar and returns a value dictated by math
-		 *
-		 * @param s the string to parse
-		 * @return Its value. This method will take input as an expression and
-		 * evaluate it. An expression can be generally defined as
-		 * (Expression[+-/*^]expression)
-		 */
-		public static double parse(String s) {
-			Expression e = new Expression(s);
-			return e.getValue();
-		}
-
-		public static int[] getMatchingMap(String s) {
-			int[] matchingMap = new int[s.length()];
-			Stack<Integer> parenStack = new Stack<>();
-			for (int i = 0; i < s.length(); i++) {
-				if (s.charAt(i) == '(') {
-					parenStack.push(i);
-				}
-				if (s.charAt(i) == ')') {
-					int temp = parenStack.pop();
-					matchingMap[temp] = i;
-					matchingMap[i] = temp;
-				}
-			}
-			return matchingMap;
-		}
-
-		public static class Expression {
-
-			char operator;
-			String straightValue;
-			private double val;
-			boolean variable;
-			boolean isSingleValue;
-			Expression left;
-			Expression right;
-			String s;
-
-			public Expression(String s) {
-				this.s = s;
-				if (!s.matches("(.*)[\\Q=+-*/^\\E](.*)")) {
-					isSingleValue = true;
-					straightValue = s;
-					try {
-						val = Double.parseDouble(s);
-					} catch (Exception ex) {
-						variable = true;
-					}
-				} else {
-					int[] matchingMap = getMatchingMap(s);
-					int x = matchingMap[1];
-
-					int mid = x == 0 ? getFirst(s) : x + 1;
-					left = new Expression(s.substring(1, mid));
-
-					right = new Expression(s.substring(mid + 1, s.length() - 1));
-					operator = s.charAt(mid);
-				}
-			}
-
-			public double getStraightValue() {
-				return variable ? getVariableValue() : Double.parseDouble(straightValue);
-			}
-
-			public double getVariableValue() {
-				return .523;
-			}
-
-			public double getValue() {
-				if (isSingleValue) {
-					return getStraightValue();
-				}
-				double leftVal = left.getValue();
-				double rightVal = right.getValue();
-				switch (operator) {
-					case '*':
-						return leftVal * rightVal;
-					case '-':
-						return leftVal - rightVal;
-					case '/':
-						return leftVal / rightVal;
-					case '+':
-						return leftVal + rightVal;
-					case '^':
-						return Math.pow(leftVal, rightVal);
-					default:
-						//prerequisites not held
-						System.err.println("Deformed pattern" + s);
-						return -1;
-				}
-
-			}
-
-			private int getFirst(String s) {
-				for (int i = 0; i < s.length(); i++) {
-					if ("+-/*^".contains(s.charAt(i) + "")) {
-						return i;
-					}
-				}
-				return -1;
-			}
-		}
-	}
 	public static String program = "";
 
 	/**
@@ -1435,7 +1280,7 @@ for(String line:stdlib){
 	}
 
 	public static double parse(String toParse) {
-		//System.out.println("asDASDASDASDASDASD"+toParse);
+
 		try {
 			return Double.parseDouble(toParse);
 		} catch (Exception ex) {
@@ -1444,7 +1289,8 @@ for(String line:stdlib){
 	}
 
 	/**
-	 * Evaluates a mathematical expression, take two.
+	 * Evaluates a mathematical expression Currently supported operators (+-//*%^)
+	 * addition subtraction multiplication division (/) modulus and exponentiation
 	 *
 	 * @param toParse
 	 * @return
@@ -1465,7 +1311,6 @@ for(String line:stdlib){
 				matchMap[i] = -1;
 			}
 		}
-//System.out.println(Arrays.toString(matchMap));
 		int firstIndex = -1;
 		for (int i = 0; i < matchMap.length; i++) {
 			if (matchMap[i] >= 0) {
@@ -1479,7 +1324,7 @@ for(String line:stdlib){
 			return parse(toParse.substring(0, firstIndex) + s + toParse.substring(matchMap[firstIndex] + 1));
 		} else {
 
-			ArrayList<Double> num = parseToInt(new ArrayList<>(Arrays.asList(toParse.split("[\\Q+-^*%/\\E]"))));
+			ArrayList<Double> num = parseToDoubles(new ArrayList<>(Arrays.asList(toParse.split("[\\Q+-^*%/\\E]"))));
 
 			ArrayList<Character> operations = new ArrayList<>();
 

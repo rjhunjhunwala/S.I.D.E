@@ -5,7 +5,6 @@ package IDE;
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
@@ -53,14 +52,20 @@ import javax.swing.KeyStroke;
  * @author Rohans, PhiNotPi
  */
 public class GUI {
- public static int command= 1;
+//	static{
+//		System.out.println(GUI.Panel.getComplementaryColor(new Color(255,255,255)));
+//	}
+
+	public static boolean invert = false;
+	public static int command = 1;
 	static ArrayList<String> lineRegexes = new ArrayList<>();
 	static ArrayList<Color> lineColors = new ArrayList<>();
 	static ArrayList<String> wordRegexes = new ArrayList<>();
 	static ArrayList<Color> wordColors = new ArrayList<>();
 
 	static final String[] LANGUAGES;
-	static{
+
+	static {
 		LANGUAGES = file.getWordsFromFile("languages.txt");
 	}
 	static Form codeForm = new EditorForm();
@@ -93,12 +98,12 @@ public class GUI {
 			super("IDE (f5=save+compile+run / f6=save)");
 			this.setJMenuBar(buildMenuBar());
 			this.setVisible(true);
-			codeScrollPane.setBackground(Color.black);
-			consoleScrollPane.setBackground(Color.black);
-			hsplit.setBackground(Color.black);
+			codeScrollPane.setBackground(invert ? Color.white : Color.black);
+			consoleScrollPane.setBackground(invert ? Color.white : Color.black);
+			hsplit.setBackground(invert ? Color.white : Color.black);
 			this.add(hsplit);
 			this.pack();
-			this.setBackground(Color.black);
+			this.setBackground(invert ? Color.white : Color.black);
 			this.setExtendedState(JFrame.MAXIMIZED_BOTH);
 
 			WindowListener exitListener = new WindowAdapter() {
@@ -163,7 +168,7 @@ public class GUI {
 								consoleForm.clear();
 								//System.out.println(LANGUAGES[command] +" " + Silos.IDEFileName);
 								Process runtime = Runtime.getRuntime().exec(
-																LANGUAGES[command] +" "+ Silos.IDEFileName);
+																LANGUAGES[command] + " " + Silos.IDEFileName);
 
 								consoleForm.addProc(runtime, f);
 							} catch (Exception ex) {
@@ -239,7 +244,7 @@ public class GUI {
 		Frame frame;
 
 		public Panel(Frame frame, Form form) {
-			this.setBackground(Color.black);
+			this.setBackground(invert ? Color.white : Color.black);
 			this.frame = frame;
 			this.form = form;
 			addMouseListener(new MouseAdapter() {
@@ -262,7 +267,8 @@ public class GUI {
 		Frame getFrame() {
 			return frame;
 		}
-public static final boolean USESCROLLBAR = false;
+		public static final boolean USESCROLLBAR = false;
+
 		@Override
 		public Dimension getPreferredSize() {
 			int max = this.getFontMetrics(form.font).stringWidth(
@@ -274,12 +280,14 @@ public static final boolean USESCROLLBAR = false;
 					max = cur;
 				}
 			}
-			return new Dimension(max + 3, USESCROLLBAR?lines.length*15:screenHeight);
+			return new Dimension(max + 3, USESCROLLBAR ? lines.length * 15 : screenHeight);
 		}
 
 		@Override
 		public void paintComponent(Graphics g) {
 			super.paintComponent(g);
+			g.setColor(invert?Color.white:Color.black);
+			g.fillRect(0,0,10000,10000);
 			g.setFont(form.font);
 			g.setColor(Color.lightGray);
 			String[] lines = form.formatLines();
@@ -310,6 +318,31 @@ public static final boolean USESCROLLBAR = false;
 			// screenlength=1024;
 		}
 
+		/**
+		 * Stack Overflow CC-SA
+		 * https://stackoverflow.com/questions/4672271/reverse-opposing-colors
+		 */
+		public static Color getComplementaryColor(Color invert) {
+//return new Color(getContrastVersionForColor(invert.getRGB()));
+			Color c = new Color(255 - invert.getRed(), 255 - invert.getGreen(), 255 - invert.getBlue());
+
+			return c;
+		}
+
+		public static int getContrastVersionForColor(int color) {
+			float[] hsv = new float[3];
+			Color.RGBtoHSB(new Color(color).getRed(), new Color(color).getGreen(), new Color(color).getBlue(),
+											hsv);
+			if (hsv[2] < 0.5) {
+				hsv[2] = 0.7f;
+			} else {
+				hsv[2] = 0.3f;
+			}
+			hsv[1] = hsv[1] * 0.2f;
+			return Color.HSBtoRGB(hsv[0], hsv[1], hsv[2]);
+		}
+		//End of Attributed work
+
 		private void prettyPrint(int l, String line, int i, Graphics g) {
 			int maxYHeight = this.getHeight();
 			int y = i * CHARHEIGHT + CHARHEIGHT;
@@ -328,7 +361,7 @@ public static final boolean USESCROLLBAR = false;
 						}
 					}
 					if (lineMatch != -1) {
-						g.setColor(lineColors.get(lineMatch));
+						g.setColor(invert ? getComplementaryColor(lineColors.get(lineMatch)) : lineColors.get(lineMatch));
 						g.drawString(line, 0, y);
 					} else {
 						int xDraw = 0;
@@ -345,13 +378,16 @@ public static final boolean USESCROLLBAR = false;
 							if (wordMatch != -1) {
 								c = wordColors.get(wordMatch);
 							}
-							g.setColor(c);
+
+							g.setColor(invert ? getComplementaryColor(c) : c);
+
 							g.drawString(w, xDraw, y);
 							xDraw += w.length() * CHARWIDTH + CHARWIDTH;
 						}
 					}
 
 				} else {
+					g.setColor(invert ? Color.black : Color.white);
 					g.drawString(line, 0, y);
 				}
 			}
@@ -366,6 +402,7 @@ public static final boolean USESCROLLBAR = false;
 				y -= l;
 				y += maxYHeight;
 			}
+			g.setColor(!invert?g.getColor():getComplementaryColor(g.getColor()));
 			g.drawLine(col * CHARWIDTH, y + 3, col * CHARWIDTH, y + 18);
 			g.drawLine(col * CHARWIDTH - 2, y + 3, col * CHARWIDTH + 2, y + 3);
 			g.drawLine(col * CHARWIDTH - 2, y + 18, col * CHARWIDTH + 2, y + 18);
@@ -433,7 +470,7 @@ public static final boolean USESCROLLBAR = false;
 		String[] docs = file.getWordsFromFile(LANGUAGE + ".DOCS.txt");
 
 		if (docs != null) {
-			for (int i = 0; i < docs.length-1; i++) {
+			for (int i = 0; i < docs.length - 1; i++) {
 				lineRegexHelp.add(docs[i]);
 				help.add(docs[i + 1].replaceAll("NEWLINE", "\n"));
 			}
@@ -549,8 +586,8 @@ public static final boolean USESCROLLBAR = false;
 		class LanguageButtonListener implements ActionListener {
 
 			final String NAME;
-final int index;
-			
+			final int index;
+
 			LanguageButtonListener(String name, int in) {
 				NAME = name;
 				index = in;
@@ -563,27 +600,36 @@ final int index;
 			}
 
 		}
-		for (int i = 0;i<LANGUAGES.length;i+=2) {
+		for (int i = 0; i < LANGUAGES.length; i += 2) {
 			String s = LANGUAGES[i];
 			menuItem = new JMenuItem(s);
-			menuItem.addActionListener(new LanguageButtonListener(s,i+1));
+			menuItem.addActionListener(new LanguageButtonListener(s, i + 1));
 			menu.add(menuItem);
 		}
-		menu = new JMenu("Advanced");
-	menuItem = new JMenuItem("Additional languages");
-	menuItem.addActionListener(new ActionListener(){
-	@Override
-	public void actionPerformed(ActionEvent e){
-		try {
-			java.awt.Desktop.getDesktop().browse(URI.create("https://tio.run/nexus/"+JOptionPane.showInputDialog(mainFrame, "Pick a language from TIO\n(Try it online!)", "Choose additional language",JOptionPane.INFORMATION_MESSAGE)));
-		} catch (IOException ex) {
-			Logger.getLogger(GUI.class.getName()).log(Level.SEVERE, null, ex);
-		}
-	}
-	});
-	menu.add(menuItem);
+		menu = new JMenu("Preferences");
+		menuItem = new JMenuItem("Invert Color Scheme");
+		menuItem.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				invert = !invert;
+			}
+		});
+		menu.add(menuItem);
 		menuBar.add(menu);
-	
+		menu = new JMenu("Advanced");
+		menuItem = new JMenuItem("Additional languages");
+		menuItem.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				try {
+					java.awt.Desktop.getDesktop().browse(URI.create("https://tio.run/nexus/" + JOptionPane.showInputDialog(mainFrame, "Pick a language from TIO\n(Try it online!)", "Choose additional language", JOptionPane.INFORMATION_MESSAGE)));
+				} catch (IOException ex) {
+					Logger.getLogger(GUI.class.getName()).log(Level.SEVERE, null, ex);
+				}
+			}
+		});
+		menu.add(menuItem);
+		menuBar.add(menu);
+
 		return menuBar;
 	}
 
