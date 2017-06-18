@@ -3,7 +3,7 @@ The Simple IDE for a Modern Age
 <h1>Features</h1>
 <ul>
 <li>
-Integrated support for [SIL](https://github.com/rjhunjhunwala/S.I.L.O.S)
+Integrated support for S.I.L.O.S (https://github.com/rjhunjhunwala/S.I.L.O.S)
 </li>
 <li>Extensible support for arbitrary languages </li>
 <li>Customisable Syntax highlighting</li>
