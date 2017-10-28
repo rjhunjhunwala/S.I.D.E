@@ -1,3 +1,0 @@
-leverage stdlib
-GOSUB Cat
-GOSUB Help
