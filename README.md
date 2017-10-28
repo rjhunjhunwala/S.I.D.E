@@ -59,7 +59,10 @@ etc...
 </pre>
 </li>
 </ul>
-For examples of this, look at the files in the SIDE folder provided for languages already implemented. Once you do this, feel free to commit your interpreter to the repository. Support for your language has now been seamlessly integrated into this IDE. If you have any questions, feel free to reach out through the issues page.
+For examples of this, look at the files in the SIDE folder provided for languages already implemented. 
+
+Once you go through this process feel free to submit a pull request with the updated files. I will accepted the PR, and support for your language has now been seamlessly integrated into this IDE. If you have any questions, feel free to reach out through the issues page.
+
 <hr/>
 
 <h1>Screenshots</h1>
