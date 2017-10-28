@@ -3,17 +3,16 @@ The Simple IDE for a Modern Age
 <h1>Features</h1>
 <ul>
 <li>
-Integrated support for S.I.L.O.S (https://github.com/rjhunjhunwala/S.I.L.O.S)
+Integrated support for SIL/S.I.L.O.S (https://github.com/rjhunjhunwala/SIL-S.I.L.O.S)
 </li>
 <li>Extensible support for arbitrary languages </li>
 <li>Customisable Syntax highlighting</li>
-<li>A default dark theme (because it looks better)</li>
 </ul>
 <h1>This repo is a collaboration with Beta - Decay </h1>
 https://github.com/beta-decay/Esolang-IDE
 
 <h1>How to add a new language</h1>
-You must Provide the following
+One of the core features of the IDE is the ease with which new languages can be added. In order to add a new language please provide the following.
 <ul>
 <li>- A command i.e "lang -args foo.lang" (note no trailing space) which will then be passed a file name as a CLA and runs the given file as a program in LANGUAGENAME</li>
 </ul>
