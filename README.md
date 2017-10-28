@@ -15,11 +15,10 @@ https://github.com/beta-decay/Esolang-IDE
 One of the core features of the IDE is the ease with which new languages can be added. In order to add a new language please provide the following.
 <ul>
 <li>- A command i.e "lang -args foo.lang" (note no trailing space) which will then be passed a file name as a CLA and runs the given file as a program in LANGUAGENAME</li>
-</ul>
+<li>
 <h2> You may optionally provide the following<h2>
 <ul>
 <li> A file named LANGUAGENAME.COLORS.txt which is formatted like so </li>
-<ul>
 <pre>
 Regex 
 r g b values of a Color if line matches regex
@@ -52,6 +51,7 @@ lang3
 command3
 etc...
 </pre>
+</ul>
 Once you do this, feel free to commit your interpreter to the repository. Support for your language has now been seamlessly integrated into this IDE.
 <hr/>
 
