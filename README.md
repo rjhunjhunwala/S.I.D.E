@@ -1,7 +1,7 @@
 # S.I.D.E
 ### The Simple IDE for a Modern Age
 
-The intent of this IDE is to provid a streamlined environment for development across different languages, especially esoteric languages
+The intent of this IDE is to provide a streamlined environment for development across different languages, especially esoteric languages
 which generally lack developmental tools. 
 
 <h1>Features</h1>
