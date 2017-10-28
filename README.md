@@ -12,8 +12,6 @@ Integrated support for <a href="https://github.com/rjhunjhunwala/SIL-S.I.L.O.S">
 <li>Extensible support for arbitrary languages </li>
 <li>Customisable Syntax highlighting</li>
 </ul>
-<h1>This repo is a collaboration with Beta - Decay </h1>
-https://github.com/beta-decay/Esolang-IDE
 
 <h1>How to add a new language</h1>
 One of the core features of the IDE is the ease with which new languages can be added. In order to add a new language please provide the following.
