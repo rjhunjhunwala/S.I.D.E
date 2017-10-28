@@ -7,7 +7,7 @@ which generally lack developemental tools.
 <h1>Features</h1>
 <ul>
 <li>
-Integrated support for <a href="https://github.com/rjhunjhunwala/SIL-S.I.L.O.S">"SIL. "</a>
+Integrated support for <a href="https://github.com/rjhunjhunwala/SIL-S.I.L.O.S">SIL.</a>
 </li>
 <li>Extensible support for arbitrary languages </li>
 <li>Customisable Syntax highlighting</li>
