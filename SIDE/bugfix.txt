@@ -1,2 +1,0 @@
-readIO
-printInt i
