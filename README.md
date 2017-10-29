@@ -34,7 +34,7 @@ Color if word matches regex
 </pre>
 </li>
 <li>
-(Optional) A file named LANGUAGENAME.DOCS.txt which is formatted like the following:
+(Optional) A file named LANGUAGENAME.DOCS.txt which is formatted like the following. The help text is displayed in a panel in the lower left corner. It can be used to display recommendations based on the text within the line selected or information regarding the commands in the line selected. 
 <pre>
 Regex
 Help text to display if the current line matches the regex "NEWLINE" is used as an escape sequence to represent a new line being displayed.
